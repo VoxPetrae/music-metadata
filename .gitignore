@@ -1,0 +1,9 @@
+.gradle
+build
+gradle
+gradlew
+*.bat
+*.class
+*.log
+*.jar
+
