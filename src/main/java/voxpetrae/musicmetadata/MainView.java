@@ -13,11 +13,25 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.DirectoryChooser;
+import java.io.File;
+import voxpetrae.musicmetadata.album.interfaces.AlbumView;
+import voxpetrae.musicmetadata.album.AlbumTableView;
+import voxpetrae.musicmetadata.guice.MusicMetadataModule;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 public class MainView extends Application {
     
+    private AlbumView _albumView;
+
     @Override
     public void start(Stage primaryStage) {
+        MusicMetadataModule module = new MusicMetadataModule();
+        Injector injector = Guice.createInjector(module);
+        this._albumView = injector.getInstance(AlbumView.class);
         final String MENU_BAR_ID = "#menuBar";
         final VBox vbox = new VBox();
         Scene scene = new Scene(vbox, 809, 809, Color.YELLOW);
@@ -25,7 +39,7 @@ public class MainView extends Application {
         menuBar.setId(MENU_BAR_ID);
         //vbox.setPadding(new Insets(0, 10, 10, 0));
         ((VBox) scene.getRoot()).getChildren().addAll(menuBar);
-        primaryStage.setTitle("Music Metadata - A minimalistic metadata handler");
+        primaryStage.setTitle("Music Metadata - A minimalistic metadata handler " + _albumView.testMessage("hoola"));
         primaryStage.setScene(scene);
         //scene.setFill(Color.BLUEVIOLET); // just playing around
         //primaryStage.initStyle(StageStyle.DECORATED);
@@ -49,11 +63,11 @@ public class MainView extends Application {
         Menu fileMenu = new Menu("File");
         Menu toolsMenu = new Menu("Tools");
         menuBar.getMenus().addAll(fileMenu, toolsMenu);
-        MenuItem openFolder = new MenuItem("Open folder");
+        MenuItem openAlbum = new MenuItem("Open album");
         MenuItem quit = new MenuItem("Quit");
-        openFolder.setOnAction(openFolderView);
+        openAlbum.setOnAction(openAlbumView);
         quit.setOnAction(exitHandler);
-        fileMenu.getItems().addAll(openFolder, quit);
+        fileMenu.getItems().addAll(openAlbum, quit);
         return menuBar;
     }
 
@@ -70,10 +84,11 @@ public class MainView extends Application {
     /**
      * Opens a folder and does some checking
      */
-    EventHandler<ActionEvent> openFolderView = new EventHandler<ActionEvent>() {
+    EventHandler<ActionEvent> openAlbumView = new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
-            System.out.println("Open folder...");
+            System.out.println("Open Album...");
+            _albumView.initiate();
         }
     };
     @Override
