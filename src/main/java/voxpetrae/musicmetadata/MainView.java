@@ -82,7 +82,7 @@ public class MainView extends Application {
         }
     };
     /**
-     * Opens a folder and does some checking
+     * Initiates the album listing GUI
      */
     EventHandler<ActionEvent> openAlbumView = new EventHandler<ActionEvent>() {
         @Override

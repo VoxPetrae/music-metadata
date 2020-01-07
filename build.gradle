@@ -20,6 +20,8 @@ repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    // For JAudiotagger
+    maven { url 'https://dl.bintray.com/ijabz/maven' }
 }
 
 dependencies {
@@ -30,6 +32,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     compile group: 'com.google.inject', name: 'guice', version: '4.2.2'
+    compile 'net.jthink:jaudiotagger:2.2.5'
 }
 
 javafx {

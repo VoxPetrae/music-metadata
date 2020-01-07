@@ -19,13 +19,8 @@ import javax.inject.Inject;
 
 public class AlbumTableView extends Stage implements AlbumView {
     private Button quitButton;
-    private IOHandler _ioHandler;
+    @Inject private IOHandler _ioHandler;
 
-    @Inject
-    public AlbumTableView(IOHandler ioHandler){
-        _ioHandler = ioHandler;
-    }
-    
     public void initiate(){
         _ioHandler.setFolderPath(true, "Choose folder");
         drawGui();
@@ -38,7 +33,7 @@ public class AlbumTableView extends Stage implements AlbumView {
         vBox.setSpacing(5);
         vBox.setPadding(new Insets(0, 10, 10, 0));
         ((VBox) scene.getRoot()).getChildren().addAll(menuBar, quitButton);
-        this.setTitle("Testing");
+        this.setTitle("Music Album");
         this.setScene(scene);
         this.show();
         this.setOnCloseRequest(a -> {
@@ -83,7 +78,7 @@ public class AlbumTableView extends Stage implements AlbumView {
     The thing is that MenuItem isn't a Node, but MenuBar is, and Button is.
     So you have to check if the event target is a MenuItem before you get the window to close.
     Alternatively, you could use different event handlers for exit actions on Button and MenuItem.
-    Or, you could find the proper way to deal with this. I'm certain there is one :).
+    Or, you could find an even better way to deal with this. I'm certain there is one :).
     */
     private Stage getStageFromEvent(ActionEvent event){
         Node node;

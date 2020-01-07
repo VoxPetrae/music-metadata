@@ -1,7 +1,9 @@
-package main.java.voxpetrae.musicmetadata.models;
+package voxpetrae.musicmetadata.models;
 
 import javafx.beans.property.*;
-
+/**
+ * A generic model for listings and overviews.
+ */
 public class AlbumTrack {
     private final IntegerProperty trackNumber = new SimpleIntegerProperty();
     private final StringProperty title = new SimpleStringProperty();
