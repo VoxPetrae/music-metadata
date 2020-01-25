@@ -3,18 +3,19 @@ package voxpetrae.musicmetadata.album;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import java.io.File;
+import java.nio.file.Path;
 import voxpetrae.musicmetadata.guice.MusicMetadataModule;
-import voxpetrae.musicmetadata.album.interfaces.IOHandler;
+import voxpetrae.musicmetadata.album.interfaces.IOHandlerInterface;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 
-public class FolderHandler extends Stage implements IOHandler {
+public class IOHandler extends Stage implements IOHandlerInterface {
 
     private String folderPath;
     
     public void setFolderPath(Boolean mockPath, String title){
         if (mockPath){
-            folderPath = "C:\\Users\\TheGuy\\Music\\Bill Evans\\Explorations";
+            folderPath = "C:\\Users\\PelleAberg\\Music\\Bill Evans\\Explorations";
         }
         else{
             DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -27,5 +28,8 @@ public class FolderHandler extends Stage implements IOHandler {
     }
     public String getFolderPath(){
         return folderPath;
+    }
+    public File getFileFromFilePath(Path filePath){
+        return filePath.toFile();
     }
 }

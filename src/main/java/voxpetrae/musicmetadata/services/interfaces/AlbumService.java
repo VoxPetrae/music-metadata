@@ -5,5 +5,5 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public interface AlbumService {
-    ObservableList<AlbumTrack> getAlbumTracks();
+    ObservableList<AlbumTrack> getAlbumTracks(String folderPath);
 }

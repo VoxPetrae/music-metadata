@@ -8,21 +8,30 @@ import javafx.scene.layout.VBox;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import voxpetrae.musicmetadata.album.interfaces.AlbumView;
-import voxpetrae.musicmetadata.album.interfaces.IOHandler;
-import voxpetrae.musicmetadata.album.FolderHandler;
-import voxpetrae.musicmetadata.guice.MusicMetadataModule;
+import javafx.collections.ObservableList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import javax.inject.Inject;
-
+import voxpetrae.musicmetadata.models.AlbumTrack;
+import voxpetrae.musicmetadata.album.interfaces.AlbumView;
+import voxpetrae.musicmetadata.album.interfaces.IOHandlerInterface;
+import voxpetrae.musicmetadata.album.IOHandler;
+import voxpetrae.musicmetadata.services.interfaces.AlbumService;
+import voxpetrae.musicmetadata.services.FlacAlbumService;
+import voxpetrae.musicmetadata.guice.MusicMetadataModule;
 
 public class AlbumTableView extends Stage implements AlbumView {
     private Button quitButton;
-    @Inject private IOHandler _ioHandler;
+    @Inject private IOHandlerInterface _ioHandler;
+    @Inject private AlbumService _flacAlbumService;
 
     public void initiate(){
-        _ioHandler.setFolderPath(true, "Choose folder");
+        _ioHandler.setFolderPath(false, "Choose folder");
+        String folderPath = _ioHandler.getFolderPath();
+        ObservableList<AlbumTrack> tracks = _flacAlbumService.getAlbumTracks(folderPath);
+        tracks.forEach((track) -> {
+            System.out.println("testing: " + track.getTitle());
+        });
         drawGui();
     }
     private void drawGui(){
