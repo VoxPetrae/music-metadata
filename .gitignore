@@ -1,6 +1,7 @@
 .gradle
 build
 gradle
+config
 gradlew
 *.bat
 *.class
