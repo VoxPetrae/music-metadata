@@ -1,5 +1,6 @@
 package voxpetrae.musicmetadata.album;
 
+import java.io.File;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -9,39 +10,42 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.collections.ObservableList;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.text.Font;
 import javax.inject.Inject;
 import voxpetrae.musicmetadata.models.AlbumTrack;
 import voxpetrae.musicmetadata.album.interfaces.AlbumView;
-import voxpetrae.musicmetadata.album.interfaces.IOHandlerInterface;
-import voxpetrae.musicmetadata.album.IOHandler;
+import voxpetrae.musicmetadata.album.interfaces.TableBuilderInterface;
+import voxpetrae.musicmetadata.helpers.interfaces.IOHelperInterface;
 import voxpetrae.musicmetadata.services.interfaces.AlbumService;
-import voxpetrae.musicmetadata.services.FlacAlbumService;
-import voxpetrae.musicmetadata.guice.MusicMetadataModule;
 
 public class AlbumTableView extends Stage implements AlbumView {
     private Button quitButton;
-    @Inject private IOHandlerInterface _ioHandler;
+    @Inject private IOHelperInterface _ioHelper;
     @Inject private AlbumService _flacAlbumService;
+    @Inject private TableBuilderInterface _tableBuilder;
 
     public void initiate(){
-        _ioHandler.setFolderPath(false, "Choose folder");
-        String folderPath = _ioHandler.getFolderPath();
+        _ioHelper.setFolderPath(false, "Choose folder");
+        String folderPath = _ioHelper.getFolderPath();
         ObservableList<AlbumTrack> tracks = _flacAlbumService.getAlbumTracks(folderPath);
-        tracks.forEach((track) -> {
-            System.out.println("testing: " + track.getTitle());
-        });
-        drawGui();
+        // tracks.forEach((track) -> {
+        //     System.out.println("testing: " + track.getTitle());
+        // });
+        drawGui(tracks);
     }
-    private void drawGui(){
+    private void drawGui(ObservableList<AlbumTrack> tracks){
         final VBox vBox = new VBox();
         Scene scene = new Scene(vBox, 1000, 500);
         MenuBar menuBar = buildMenu();
+        Label label = buildImageLabel();
+        TableView table = _tableBuilder.buildTable(tracks);
         quitButton = buildQuitButton();
         vBox.setSpacing(5);
         vBox.setPadding(new Insets(0, 10, 10, 0));
-        ((VBox) scene.getRoot()).getChildren().addAll(menuBar, quitButton);
+        //((VBox) scene.getRoot()).getChildren().addAll(menuBar, quitButton);
+        ((VBox) scene.getRoot()).getChildren().addAll(menuBar, label, table);
         this.setTitle("Music Album");
         this.setScene(scene);
         this.show();
@@ -59,16 +63,29 @@ public class AlbumTableView extends Stage implements AlbumView {
         fileMenu.getProperties().put(MenuBar.class.getCanonicalName(), menuBar); // Hack to access Node from EventHandler
         return menuBar;
     }
+    private Label buildImageLabel(){
+        Label label = new Label(_flacAlbumService.getAlbumArtist() + ": " + _flacAlbumService.getAlbumName());
+        label.setFont(new Font("Arial", 20));
+        label.setPadding(new Insets(10));
+        label.getStyleClass().add("tableLable");
+        String folderPath = _ioHelper.getFolderPath();
+        String imagePath = folderPath + "\\Folder.jpg";
+        Image image = new Image(new File(imagePath).toURI().toString());
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(80);
+        imageView.setFitWidth(80);
+        label.setGraphic(imageView);
+        return label;
+    }
+
     private Button buildQuitButton(){
-        Button button = new Button("Quit" + _ioHandler.getFolderPath());
+        Button button = new Button("Quit" + _ioHelper.getFolderPath());
         //button.getStyleClass().add("marginalized-button");
         button.setOnAction(exitHandler);
         //button.setDisable(true);
         return button;
     }
-    public String testMessage(String testString){
-        return testString + ", and then some!";
-    }
+   
     EventHandler<ActionEvent> exitHandler = new EventHandler<ActionEvent>(){
         @Override
         public void handle(ActionEvent event) {

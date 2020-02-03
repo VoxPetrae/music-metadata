@@ -14,6 +14,8 @@ plugins {
     id 'application'
 
     id 'org.openjfx.javafxplugin' version '0.0.7'
+    // 
+    id 'checkstyle'
 }
 
 repositories {
@@ -40,5 +42,21 @@ javafx {
     modules = [ 'javafx.controls' ]
 }
 
+checkstyle {
+    toolVersion "8.29"
+}
+//task.withType(Checkstyle) {ignoreFailures = true}
+// checkstyleMain {
+//     ignoreFailures = true
+// }
+checkstyleTest {
+    ignoreFailures = true
+}
+checkstyle {
+    ignoreFailures = true
+}
+//checkstyleTask.ignoreFailures = true
+
+//D:\programming\gitprojects\music-metadata\src\main\java\voxpetrae\musicmetadata
 // Define the main class for the application
 mainClassName = 'voxpetrae.musicmetadata.MainView'

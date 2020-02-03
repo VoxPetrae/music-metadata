@@ -1,21 +1,21 @@
-package voxpetrae.musicmetadata.album;
+package voxpetrae.musicmetadata.helpers;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import java.io.File;
-import java.nio.file.Path;
-import voxpetrae.musicmetadata.guice.MusicMetadataModule;
-import voxpetrae.musicmetadata.album.interfaces.IOHandlerInterface;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
+import voxpetrae.musicmetadata.helpers.interfaces.IOHelperInterface;
+import voxpetrae.musicmetadata.helpers.IOHelper;
 
-public class IOHandler extends Stage implements IOHandlerInterface {
+
+public class IOHelper extends Stage implements IOHelperInterface {
 
     private String folderPath;
     
     public void setFolderPath(Boolean mockPath, String title){
         if (mockPath){
-            folderPath = "C:\\Users\\PelleAberg\\Music\\Bill Evans\\Explorations";
+            folderPath = "C:\\Users\\MrAberg\\Music\\Bill Evans\\Explorations";
         }
         else{
             DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -32,4 +32,7 @@ public class IOHandler extends Stage implements IOHandlerInterface {
     public File getFileFromFilePath(Path filePath){
         return filePath.toFile();
     }
+    public Boolean isAudioFile(Path filePath){
+        return Files.isRegularFile(filePath) && filePath.toString().toLowerCase().endsWith("flac");
+   }
 }

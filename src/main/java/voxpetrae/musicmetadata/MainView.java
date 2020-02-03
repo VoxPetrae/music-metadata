@@ -13,15 +13,10 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.stage.DirectoryChooser;
-import java.io.File;
-import voxpetrae.musicmetadata.album.interfaces.AlbumView;
-import voxpetrae.musicmetadata.album.AlbumTableView;
-import voxpetrae.musicmetadata.guice.MusicMetadataModule;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
+import voxpetrae.musicmetadata.album.interfaces.AlbumView;
+import voxpetrae.musicmetadata.guice.MusicMetadataModule;
 
 public class MainView extends Application {
     
@@ -39,7 +34,7 @@ public class MainView extends Application {
         menuBar.setId(MENU_BAR_ID);
         //vbox.setPadding(new Insets(0, 10, 10, 0));
         ((VBox) scene.getRoot()).getChildren().addAll(menuBar);
-        primaryStage.setTitle("Music Metadata - A minimalistic metadata handler " + _albumView.testMessage("hoola"));
+        primaryStage.setTitle("Music Metadata - A minimalistic metadata handler");
         primaryStage.setScene(scene);
         //scene.setFill(Color.BLUEVIOLET); // just playing around
         //primaryStage.initStyle(StageStyle.DECORATED);
