@@ -18,7 +18,7 @@ import voxpetrae.musicmetadata.services.interfaces.AlbumService;
 import voxpetrae.musicmetadata.models.AlbumTrack;
 import voxpetrae.musicmetadata.services.interfaces.TagService; 
 //import voxpetrae.musicmetadata.services.FlacTagService;
-import voxpetrae.musicmetadata.helpers.interfaces.IOHelperInterface;
+import voxpetrae.musicmetadata.common.interfaces.IOHelperInterface;
 
 public class FlacAlbumService implements AlbumService {
     @Inject private IOHelperInterface _ioHelper;

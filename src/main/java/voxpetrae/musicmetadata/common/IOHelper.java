@@ -1,12 +1,12 @@
-package voxpetrae.musicmetadata.helpers;
+package voxpetrae.musicmetadata.common;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import voxpetrae.musicmetadata.helpers.interfaces.IOHelperInterface;
-import voxpetrae.musicmetadata.helpers.IOHelper;
+import voxpetrae.musicmetadata.common.interfaces.IOHelperInterface;
+import voxpetrae.musicmetadata.common.IOHelper;
 
 
 public class IOHelper extends Stage implements IOHelperInterface {

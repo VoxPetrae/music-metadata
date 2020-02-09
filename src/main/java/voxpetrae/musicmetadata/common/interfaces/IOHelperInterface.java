@@ -1,4 +1,4 @@
-package voxpetrae.musicmetadata.helpers.interfaces;
+package voxpetrae.musicmetadata.common.interfaces;
 import java.io.File;
 import java.nio.file.Path;
 

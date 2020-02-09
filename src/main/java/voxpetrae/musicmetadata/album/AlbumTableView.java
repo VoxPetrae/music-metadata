@@ -1,10 +1,22 @@
 package voxpetrae.musicmetadata.album;
 
 import java.io.File;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
+//import java.util.function.Consumer;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.layout.VBox;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,19 +29,24 @@ import javax.inject.Inject;
 import voxpetrae.musicmetadata.models.AlbumTrack;
 import voxpetrae.musicmetadata.album.interfaces.AlbumView;
 import voxpetrae.musicmetadata.album.interfaces.TableBuilderInterface;
-import voxpetrae.musicmetadata.helpers.interfaces.IOHelperInterface;
+import voxpetrae.musicmetadata.common.interfaces.IOHelperInterface;
+import voxpetrae.musicmetadata.common.NameOrder;
+import voxpetrae.musicmetadata.common.NameTagsToChange;;
 import voxpetrae.musicmetadata.services.interfaces.AlbumService;
+import voxpetrae.musicmetadata.services.interfaces.NameOrderService;
 
 public class AlbumTableView extends Stage implements AlbumView {
+    private ObservableList<AlbumTrack> tracks;
     private Button quitButton;
     @Inject private IOHelperInterface _ioHelper;
     @Inject private AlbumService _flacAlbumService;
     @Inject private TableBuilderInterface _tableBuilder;
+    @Inject private NameOrderService _nameOrderService;
 
     public void initiate(){
         _ioHelper.setFolderPath(false, "Choose folder");
         String folderPath = _ioHelper.getFolderPath();
-        ObservableList<AlbumTrack> tracks = _flacAlbumService.getAlbumTracks(folderPath);
+       tracks = _flacAlbumService.getAlbumTracks(folderPath);
         // tracks.forEach((track) -> {
         //     System.out.println("testing: " + track.getTitle());
         // });
@@ -56,10 +73,14 @@ public class AlbumTableView extends Stage implements AlbumView {
     private MenuBar buildMenu(){
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
-        menuBar.getMenus().add(fileMenu);
+        Menu toolsMenu = new Menu("Tools");
+        menuBar.getMenus().addAll(fileMenu, toolsMenu);
         MenuItem quit = new MenuItem("Quit");
+        MenuItem changeNameOrder = new MenuItem("Change name order");
         quit.setOnAction(exitHandler);
+        changeNameOrder.setOnAction(changeNameOrderHandler);
         fileMenu.getItems().add(quit);
+        toolsMenu.getItems().add(changeNameOrder);
         fileMenu.getProperties().put(MenuBar.class.getCanonicalName(), menuBar); // Hack to access Node from EventHandler
         return menuBar;
     }
@@ -99,6 +120,66 @@ public class AlbumTableView extends Stage implements AlbumView {
             }
         }
     };
+    EventHandler<ActionEvent> changeNameOrderHandler = new EventHandler<ActionEvent>() {
+        /**
+         * Opens the view for name order change (e.g., from "Lennon, John" to "John Lennon" and v.v.)
+         *
+         * @param event - the click on the menu item
+         */
+        @Override
+        public void handle(ActionEvent event) {
+            List<String> nameFieldsToChange = new ArrayList<>();
+            String nameOrder = "";
+            HashMap<String, Boolean> prefs = new HashMap<>();
+            // Open dialog window with name alternatives
+            Dialog dialog = _nameOrderService.createNameTagChooser(
+                    param -> prefs.put("ARTIST", param ? true : false),
+                    param -> prefs.put("ALBUMARTIST", param  ? true : false),
+                    param -> prefs.put("COMPOSER", param  ? true : false),
+                    param -> prefs.put("STRAIGHT_NAMEORDER", param  ? true : false));
+            // Get response
+            Optional<ButtonType> result = dialog.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK){
+                if (prefs.get("ARTIST") != null)
+                    nameFieldsToChange.add(NameTagsToChange.ARTIST.name());
+                if (prefs.get("ALBUMARTIST") != null)
+                    nameFieldsToChange.add(NameTagsToChange.ALBUMARTIST.name());
+                if (prefs.get("COMPOSER") != null)
+                    nameFieldsToChange.add(NameTagsToChange.COMPOSER.name());
+                // Notice: STRAIGHT_NAMEORDER = null means it's not registered by the listener,
+                // but since it's pre-selected it still counts as true. Tricky yes?
+                if(prefs.get("STRAIGHT_NAMEORDER") == null){
+                    System.out.println("STRAIGHT IS SELECTED");
+                    nameOrder = NameOrder.GIVENNAMESPACESURNAME.name();
+                }
+                else if(prefs.get("STRAIGHT_NAMEORDER")){
+                    System.out.println("STRAIGHT IS SELECTED");
+                    nameOrder = NameOrder.GIVENNAMESPACESURNAME.name();
+                }
+                else{
+                    System.out.println("REVERSE IS SELECTED");
+                    nameOrder = NameOrder.SURNAMECOMMASPACEGIVENNAME.name();
+                }
+                System.out.println("Artists: " + prefs.get("ARTIST") + ", albumArtists: " + prefs.get("ALBUMARTIST") +
+                        ", composers: " + prefs.get("COMPOSER") + ", chosen name order: " + nameOrder);
+                if (nameFieldsToChange.size() > 0){
+                    _nameOrderService.changeNameOrder(tracks, nameFieldsToChange, nameOrder);
+                    if (tracks.get(0).isUpdated())
+                        toggleButtonStatus(false);
+                }
+                else {
+                    System.out.println("No name tags choosen!");
+                }
+            }
+            else{
+                System.out.println("Name order change aborted");
+            }
+        }
+    };
+    private void toggleButtonStatus(boolean disabled){
+        System.out.println("Toggling...");
+        //saveChangesButton.setDisable(disabled);
+    }
     /*
     Helper to access Stage from ActionEvent.
     The thing is that MenuItem isn't a Node, but MenuBar is, and Button is.

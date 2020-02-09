@@ -117,11 +117,8 @@ public class TableBuilder implements TableBuilderInterface {
 
                 @Override
                 public void handle(ActionEvent t) {
-                    //System.out.println("!!!!!!!!!!!!!!!!!!! CSDFGSFDGS");
-                    // get Selected Item
                     AlbumTrack currentTrack = ButtonCell.this.getTableView().getItems().get(ButtonCell.this.getIndex());
-                    //remove selected item from the table list
-                    System.out.println("!!!!!!!!!!!!!!!!!!! CHOICE: " + currentTrack.getTitle());
+                    
                     //new TagView(Paths.get(currentTrack.getFilePath()));
                 }
             });
