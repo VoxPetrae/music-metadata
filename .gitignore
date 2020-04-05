@@ -3,6 +3,7 @@ build
 gradle
 config
 gradlew
+testfiles
 *.bat
 *.class
 *.log

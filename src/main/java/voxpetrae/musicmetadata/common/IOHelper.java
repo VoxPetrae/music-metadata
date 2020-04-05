@@ -8,14 +8,16 @@ import javafx.stage.Stage;
 import voxpetrae.musicmetadata.common.interfaces.IOHelperInterface;
 import voxpetrae.musicmetadata.common.IOHelper;
 
-
 public class IOHelper extends Stage implements IOHelperInterface {
 
     private String folderPath;
     
-    public void setFolderPath(Boolean mockPath, String title){
-        if (mockPath){
-            folderPath = "C:\\Users\\MrAberg\\Music\\Bill Evans\\Explorations";
+    public void setFolderPath(String title){
+        var useMockPathString = (String) Props.prop("usemockpath");
+        boolean useMockPath = Boolean.valueOf(useMockPathString);
+        System.out.println("String " + useMockPathString + ", bool: " + useMockPathString);
+        if (useMockPath){
+            folderPath = Props.prop("mockpath");
         }
         else{
             DirectoryChooser directoryChooser = new DirectoryChooser();

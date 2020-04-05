@@ -26,12 +26,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Font;
 import javax.inject.Inject;
+import org.jaudiotagger.audio.exceptions.*;
 import voxpetrae.musicmetadata.models.AlbumTrack;
 import voxpetrae.musicmetadata.album.interfaces.AlbumView;
 import voxpetrae.musicmetadata.album.interfaces.TableBuilderInterface;
 import voxpetrae.musicmetadata.common.interfaces.IOHelperInterface;
 import voxpetrae.musicmetadata.common.NameOrder;
-import voxpetrae.musicmetadata.common.NameTagsToChange;;
+import voxpetrae.musicmetadata.common.NameTagsToChange;
 import voxpetrae.musicmetadata.services.interfaces.AlbumService;
 import voxpetrae.musicmetadata.services.interfaces.NameOrderService;
 
@@ -43,13 +44,15 @@ public class AlbumTableView extends Stage implements AlbumView {
     @Inject private TableBuilderInterface _tableBuilder;
     @Inject private NameOrderService _nameOrderService;
 
-    public void initiate(){
-        _ioHelper.setFolderPath(false, "Choose folder");
+    public void initiate() {
+        _ioHelper.setFolderPath("Choose folder");
         String folderPath = _ioHelper.getFolderPath();
-       tracks = _flacAlbumService.getAlbumTracks(folderPath);
-        // tracks.forEach((track) -> {
-        //     System.out.println("testing: " + track.getTitle());
-        // });
+        if (folderPath != null){
+            tracks = _flacAlbumService.getAlbumTracks(folderPath);    
+        }
+        else{
+            return;
+        }
         drawGui(tracks);
     }
     private void drawGui(ObservableList<AlbumTrack> tracks){

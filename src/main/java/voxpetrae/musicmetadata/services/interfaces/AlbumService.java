@@ -2,6 +2,7 @@ package voxpetrae.musicmetadata.services.interfaces;
 
 import voxpetrae.musicmetadata.models.AlbumTrack;
 import javafx.collections.ObservableList;
+import org.jaudiotagger.audio.exceptions.*;
 
 /**
  * Provides the caller (typically a view/GUI) with a list of album tracks.

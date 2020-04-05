@@ -4,7 +4,7 @@ import java.nio.file.Path;
 
 public interface IOHelperInterface {
     String getFolderPath();
-    void setFolderPath(Boolean mockPath, String title);
+    void setFolderPath(String title);
     File getFileFromFilePath(Path filePath);
     Boolean isAudioFile(Path filePath);
 }

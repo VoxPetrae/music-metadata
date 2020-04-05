@@ -15,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import org.jaudiotagger.audio.exceptions.*;
 import voxpetrae.musicmetadata.album.interfaces.AlbumView;
 import voxpetrae.musicmetadata.guice.MusicMetadataModule;
 
@@ -83,7 +84,9 @@ public class MainView extends Application {
         @Override
         public void handle(ActionEvent event) {
             System.out.println("Open Album...");
-            _albumView.initiate();
+            
+                _albumView.initiate();
+            
         }
     };
     @Override

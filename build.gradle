@@ -55,8 +55,18 @@ checkstyleTest {
 checkstyle {
     ignoreFailures = true
 }
+// sourceSets {
+//     main {
+//         resources {
+//             srcDirs = ['src/resources']
+//         }
+//     }
+// }
 //checkstyleTask.ignoreFailures = true
-
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+    options.deprecation = true
+}
 //D:\programming\gitprojects\music-metadata\src\main\java\voxpetrae\musicmetadata
 // Define the main class for the application
 mainClassName = 'voxpetrae.musicmetadata.MainView'
