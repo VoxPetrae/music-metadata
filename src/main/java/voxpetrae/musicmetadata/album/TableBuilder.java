@@ -1,21 +1,29 @@
 package voxpetrae.musicmetadata.album;
 
+import java.nio.file.Paths;
+import java.nio.file.Path;
 import javafx.scene.control.*;
 import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.event.EventHandler;
 import javafx.event.ActionEvent;
 import javafx.util.Callback;
-import javafx.scene.input.MouseButton;
+//import javafx.scene.input.MouseButton;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import voxpetrae.musicmetadata.guice.MusicMetadataModule;
+
 
 import voxpetrae.musicmetadata.models.AlbumTrack;
+import voxpetrae.musicmetadata.views.interfaces.TagView;
 import voxpetrae.musicmetadata.album.interfaces.TableBuilderInterface;
 import voxpetrae.musicmetadata.textfieldworkaround.StringTableCell;
 
+//@SuppressWarnings("unchecked")
 public class TableBuilder implements TableBuilderInterface {
-    
+    @SuppressWarnings("unchecked")
     public TableView buildTable(ObservableList<AlbumTrack> tracks){
         // Create a TableView and make its AlbumTrack items observable and editable
         TableView<AlbumTrack> table = new TableView();
@@ -48,7 +56,6 @@ public class TableBuilder implements TableBuilderInterface {
         TableColumn composerColumn = new TableColumn("Composer");
         composerColumn.setCellValueFactory(new PropertyValueFactory<>("composer"));
         composerColumn.setCellFactory(cellDataFeatures -> new StringTableCell());
-        //composerColumn.setOnEditCancel(t -> toggleButtonStatus(false));
         composerColumn.setOnEditCommit(
                 (EventHandler<TableColumn.CellEditEvent<AlbumTrack, String>>) cellEditEvent -> cellEditEvent.getTableView().getItems().get(
                         cellEditEvent.getTablePosition().getRow()).setComposer(cellEditEvent.getNewValue()));
@@ -84,26 +91,8 @@ public class TableBuilder implements TableBuilderInterface {
                 return new ButtonCell();
             }
         });
-        //viewAllColumn.setOnEditStart(tagViewHandler);
         table.getColumns().addAll(trackColumn, titleColumn, artistColumn, albumArtistColumn, composerColumn, genreColumn, yearColumn, updatedColumn, viewAllColumn);
         table.setItems(tracks);
-//        table.setOnMouseClicked((MouseEvent event) -> {
-//            if(event.getButton().equals(MouseButton.PRIMARY)){
-//                //TableCell cell = (TableCell) event.getSource();
-//                System.out.println("TJOHO: " + table.getSelectionModel().getSelectedItem().getTitle() + ", "  + event.getSource().toString());
-//            }
-//        });
-        table.setRowFactory(tv -> {
-            TableRow<AlbumTrack> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY) { //             && event.getClickCount() == 2
-                    AlbumTrack albumTrack = row.getItem();
-                    //Path filePath = Paths.get(albumTrack.getFilePath());
-                    //new TagView(filePath);
-                }
-            });
-            return row ;
-        });
         return table;
     }
     //Define the button cell
@@ -118,8 +107,10 @@ public class TableBuilder implements TableBuilderInterface {
                 @Override
                 public void handle(ActionEvent t) {
                     AlbumTrack currentTrack = ButtonCell.this.getTableView().getItems().get(ButtonCell.this.getIndex());
-                    
-                    //new TagView(Paths.get(currentTrack.getFilePath()));
+                    Path filePath = Paths.get(currentTrack.getFilePath());
+                    Injector injector = Guice.createInjector(new MusicMetadataModule());
+                    TagView tagView = injector.getInstance(TagView.class);
+                    tagView.initiate(filePath);
                 }
             });
         }
@@ -127,7 +118,6 @@ public class TableBuilder implements TableBuilderInterface {
         //Display button if the row is not empty
         @Override
         protected void updateItem(Boolean t, boolean empty) {
-            //System.out.println("!!!!!!!!!!!!!!!!!!! C");
             super.updateItem(t, empty);
             if(!empty){
                 setGraphic(cellButton);

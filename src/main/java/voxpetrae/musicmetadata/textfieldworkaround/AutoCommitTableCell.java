@@ -72,7 +72,7 @@ public abstract class AutoCommitTableCell<S,T> extends TableCell<S,T>
     @Override
     protected void updateItem(T newValue, boolean empty) {
         String val = newValue == null ? "NULL" : newValue.toString();
-        System.out.println("Updating item... " + val);
+        //System.out.println("Updating item... " + val);
         if (startEditing && newValue == null)
             newValue = (defaultValue = getDefaultValue());
 

@@ -26,7 +26,7 @@ public class NameOrderService implements voxpetrae.musicmetadata.services.interf
     public Dialog<String> createNameTagChooser(Consumer<Boolean> artistsAction, Consumer<Boolean> albumArtistsAction,
         Consumer<Boolean> composersAction, Consumer<Boolean> straightNameOrderAction){
             // Create dialog
-        Dialog<String> dialog = new Dialog();
+        Dialog<String> dialog = new Dialog<String>();
         dialog.setTitle("Name order choices");
         dialog.setHeaderText("Select name tag(s) to change and which name order to change to");
         dialog.setContentText("Name order choices");
@@ -94,7 +94,7 @@ public class NameOrderService implements voxpetrae.musicmetadata.services.interf
     }
     public void changeNameOrder(ObservableList<AlbumTrack> albumTracks, List<String> nameTagFieldsToChange, String nameOrder){
         nameTagFieldsToChange.forEach((String fname) -> {
-            System.out.println("--- " + fname + ", " + albumTracks.size());
+            //System.out.println("--- " + fname + ", " + albumTracks.size());
         });
 
         albumTracks.forEach((AlbumTrack track) -> {

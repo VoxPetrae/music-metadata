@@ -11,7 +11,6 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -25,15 +24,17 @@ public class MainView extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        //Application.setUserAgentStylesheet(STYLESHEET_CASPIAN);
+        //Application.setUserAgentStylesheet(STYLESHEET_MODENA);
         MusicMetadataModule module = new MusicMetadataModule();
         Injector injector = Guice.createInjector(module);
         this._albumView = injector.getInstance(AlbumView.class);
+        
         final String MENU_BAR_ID = "#menuBar";
         final VBox vbox = new VBox();
-        Scene scene = new Scene(vbox, 809, 809, Color.YELLOW);
+        Scene scene = new Scene(vbox, 809, 809);
         MenuBar menuBar = buildMenu();
         menuBar.setId(MENU_BAR_ID);
-        //vbox.setPadding(new Insets(0, 10, 10, 0));
         ((VBox) scene.getRoot()).getChildren().addAll(menuBar);
         primaryStage.setTitle("Music Metadata - A minimalistic metadata handler");
         primaryStage.setScene(scene);

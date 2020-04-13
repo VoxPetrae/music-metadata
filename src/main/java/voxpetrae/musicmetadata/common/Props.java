@@ -9,10 +9,10 @@ public class Props {
     static String fileName = "musicmetadata.properties";
     //static InputStream inputStream;
     public static String prop(String key){
-        System.out.println("prop " + fileName);
+        //System.out.println("prop " + fileName);
         Properties properties = new Properties();
         //Thread currentThread = Thread.currentThread();
-        
+        //System.out.println("PROPPATH " + Props.class.getResource(fileName).toExternalForm());
         try(InputStream propertiesStream = Props.class.getResource(fileName).openStream()){
             if (propertiesStream != null){
                 properties.load(propertiesStream);

@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
-//import java.util.function.Consumer;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -58,13 +56,14 @@ public class AlbumTableView extends Stage implements AlbumView {
     private void drawGui(ObservableList<AlbumTrack> tracks){
         final VBox vBox = new VBox();
         Scene scene = new Scene(vBox, 1000, 500);
+        var cssPath = getClass().getResource("../css/musicmetadata.css").toExternalForm();
+        scene.getStylesheets().add(cssPath);
         MenuBar menuBar = buildMenu();
         Label label = buildImageLabel();
         TableView table = _tableBuilder.buildTable(tracks);
         quitButton = buildQuitButton();
         vBox.setSpacing(5);
         vBox.setPadding(new Insets(0, 10, 10, 0));
-        //((VBox) scene.getRoot()).getChildren().addAll(menuBar, quitButton);
         ((VBox) scene.getRoot()).getChildren().addAll(menuBar, label, table);
         this.setTitle("Music Album");
         this.setScene(scene);
@@ -130,10 +129,10 @@ public class AlbumTableView extends Stage implements AlbumView {
          * @param event - the click on the menu item
          */
         @Override
+        @SuppressWarnings("unchecked")
         public void handle(ActionEvent event) {
             List<String> nameFieldsToChange = new ArrayList<>();
-            String nameOrder = "";
-            HashMap<String, Boolean> prefs = new HashMap<>();
+                        HashMap<String, Boolean> prefs = new HashMap<>();
             // Open dialog window with name alternatives
             Dialog dialog = _nameOrderService.createNameTagChooser(
                     param -> prefs.put("ARTIST", param ? true : false),
@@ -141,42 +140,47 @@ public class AlbumTableView extends Stage implements AlbumView {
                     param -> prefs.put("COMPOSER", param  ? true : false),
                     param -> prefs.put("STRAIGHT_NAMEORDER", param  ? true : false));
             // Get response
-            Optional<ButtonType> result = dialog.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK){
-                if (prefs.get("ARTIST") != null)
-                    nameFieldsToChange.add(NameTagsToChange.ARTIST.name());
-                if (prefs.get("ALBUMARTIST") != null)
-                    nameFieldsToChange.add(NameTagsToChange.ALBUMARTIST.name());
-                if (prefs.get("COMPOSER") != null)
-                    nameFieldsToChange.add(NameTagsToChange.COMPOSER.name());
-                // Notice: STRAIGHT_NAMEORDER = null means it's not registered by the listener,
-                // but since it's pre-selected it still counts as true. Tricky yes?
-                if(prefs.get("STRAIGHT_NAMEORDER") == null){
-                    System.out.println("STRAIGHT IS SELECTED");
-                    nameOrder = NameOrder.GIVENNAMESPACESURNAME.name();
-                }
-                else if(prefs.get("STRAIGHT_NAMEORDER")){
-                    System.out.println("STRAIGHT IS SELECTED");
-                    nameOrder = NameOrder.GIVENNAMESPACESURNAME.name();
+            //Optional<ButtonType> result = (Optional<ButtonType>) dialog.showAndWait();
+            dialog.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK){
+                    final String nameOrder;
+                    if (prefs.get("ARTIST") != null)
+                        nameFieldsToChange.add(NameTagsToChange.ARTIST.name());
+                    if (prefs.get("ALBUMARTIST") != null)
+                        nameFieldsToChange.add(NameTagsToChange.ALBUMARTIST.name());
+                    if (prefs.get("COMPOSER") != null)
+                        nameFieldsToChange.add(NameTagsToChange.COMPOSER.name());
+                    // Notice: STRAIGHT_NAMEORDER = null means it's not registered by the listener,
+                    // but since it's pre-selected it still counts as true. Tricky yes?
+                    if(prefs.get("STRAIGHT_NAMEORDER") == null){
+                        System.out.println("STRAIGHT IS SELECTED");
+                        nameOrder = NameOrder.GIVENNAMESPACESURNAME.name();
+                    }
+                    else if(prefs.get("STRAIGHT_NAMEORDER")){
+                        System.out.println("STRAIGHT IS SELECTED");
+                        nameOrder = NameOrder.GIVENNAMESPACESURNAME.name();
+                    }
+                    else{
+                        System.out.println("REVERSE IS SELECTED");
+                        nameOrder = NameOrder.SURNAMECOMMASPACEGIVENNAME.name();
+                    }
+                    System.out.println("Artists: " + prefs.get("ARTIST") + ", albumArtists: " + prefs.get("ALBUMARTIST") +
+                            ", composers: " + prefs.get("COMPOSER") + ", chosen name order: " + nameOrder);
+                    if (nameFieldsToChange.size() > 0){
+                        _nameOrderService.changeNameOrder(tracks, nameFieldsToChange, nameOrder);
+                        if (tracks.get(0).isUpdated())
+                            toggleButtonStatus(false);
+                    }
+                    else {
+                        System.out.println("No name tags choosen!");
+                    }
                 }
                 else{
-                    System.out.println("REVERSE IS SELECTED");
-                    nameOrder = NameOrder.SURNAMECOMMASPACEGIVENNAME.name();
+                    System.out.println("Name order change aborted");
                 }
-                System.out.println("Artists: " + prefs.get("ARTIST") + ", albumArtists: " + prefs.get("ALBUMARTIST") +
-                        ", composers: " + prefs.get("COMPOSER") + ", chosen name order: " + nameOrder);
-                if (nameFieldsToChange.size() > 0){
-                    _nameOrderService.changeNameOrder(tracks, nameFieldsToChange, nameOrder);
-                    if (tracks.get(0).isUpdated())
-                        toggleButtonStatus(false);
-                }
-                else {
-                    System.out.println("No name tags choosen!");
-                }
-            }
-            else{
-                System.out.println("Name order change aborted");
-            }
+
+            });
+            
         }
     };
     private void toggleButtonStatus(boolean disabled){
@@ -194,7 +198,7 @@ public class AlbumTableView extends Stage implements AlbumView {
         Node node;
         var target = event.getTarget();
         if (target instanceof MenuItem){
-            System.out.println("Target ");
+            System.out.println("Target is Menu");
             MenuItem item = (MenuItem) event.getTarget();
             Menu menu = item.getParentMenu();
             MenuBar bar = (MenuBar) menu.getProperties().get(MenuBar.class.getCanonicalName());

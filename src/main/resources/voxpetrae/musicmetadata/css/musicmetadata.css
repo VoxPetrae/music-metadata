@@ -1,0 +1,11 @@
+.tableStyle {
+    -fx-control-inner-background: rgb(228, 228, 241);
+}
+.tableLable {
+    -fx-background-color:rgb(230, 191, 19);
+    -fx-font: 26px "Serif";
+    -fx-text-fill: rgb(44, 33, 148);
+}
+.marginalized-button {
+    -fx-alignment: center;
+}

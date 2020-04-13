@@ -15,7 +15,6 @@ public class IOHelper extends Stage implements IOHelperInterface {
     public void setFolderPath(String title){
         var useMockPathString = (String) Props.prop("usemockpath");
         boolean useMockPath = Boolean.valueOf(useMockPathString);
-        System.out.println("String " + useMockPathString + ", bool: " + useMockPathString);
         if (useMockPath){
             folderPath = Props.prop("mockpath");
         }
