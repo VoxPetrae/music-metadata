@@ -1,4 +1,4 @@
-package voxpetrae.musicmetadata.album;
+package voxpetrae.musicmetadata.views;
 
 import java.io.File;
 import java.util.List;
@@ -26,8 +26,8 @@ import javafx.scene.text.Font;
 import javax.inject.Inject;
 import org.jaudiotagger.audio.exceptions.*;
 import voxpetrae.musicmetadata.models.AlbumTrack;
-import voxpetrae.musicmetadata.album.interfaces.AlbumView;
-import voxpetrae.musicmetadata.album.interfaces.TableBuilderInterface;
+import voxpetrae.musicmetadata.views.interfaces.AlbumView;
+import voxpetrae.musicmetadata.views.interfaces.TableBuilderInterface;
 import voxpetrae.musicmetadata.common.interfaces.IOHelperInterface;
 import voxpetrae.musicmetadata.common.NameOrder;
 import voxpetrae.musicmetadata.common.NameTagsToChange;

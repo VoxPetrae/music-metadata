@@ -1,4 +1,4 @@
-package voxpetrae.musicmetadata.album.interfaces;
+package voxpetrae.musicmetadata.views.interfaces;
 
 import javafx.scene.control.*;
 import javafx.collections.ObservableList;

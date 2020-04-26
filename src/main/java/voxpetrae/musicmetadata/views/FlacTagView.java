@@ -31,9 +31,6 @@ public class FlacTagView extends Stage implements TagView{
     @Inject private IOHelperInterface _ioHelper;
     @Inject private TagService _tagService;
     
-    // public TagView(){
-
-    // }
     public void initiate(Path filePath){
         if (_ioHelper.isAudioFile(filePath)){
             File file = filePath.toFile();
@@ -85,36 +82,20 @@ public class FlacTagView extends Stage implements TagView{
         fileMenu.getProperties().put(MenuBar.class.getCanonicalName(), menuBar); // Hack to access Node from EventHandler
         return menuBar;
     }
+    // Todo: Maybe this should be refactored to a separate class, like we did in AlbumTableView. I'll think about it.
     private TableView buildTable(ObservableList<VorbisCommentTagField> fields){
         TableView table = new TableView();
         table.getStyleClass().add("tableStyle");
         table.setEditable(true);
-        //Callback<TableColumn<VorbisCommentTagField, String>,
-        //        TableCell<VorbisCommentTagField, String>> cellFactory
-        //        = (TableColumn<VorbisCommentTagField, String> p) -> new EditCell();
-        // Callback is a generic interface, in this case taking a TableColumn amd returning an editable TableCell
-        // What we need here is an editor for . Ponder!
-        //Callback<TableColumn, TableCell> cellFactory = p -> {
-        //    return new AlbumTrackEditor(); // This will crash because the model is VorbisCommentTagField, not AlbumTrack
-        //};
-        //Callback<TableColumn<VorbisCommentTagField, String>, TableCell<VorbisCommentTagField, String>> cellFactory
-        //        = (TableColumn<VorbisCommentTagField, String> p) -> new TableCell<VorbisCommentTagField, String>();
         TableColumn idColumn = new TableColumn("Tag ID");
         TableColumn contentColumn = new TableColumn("Content");
         idColumn.setMinWidth(100);
         // The column's cell value factory is used to populate the column cells
         idColumn.setCellValueFactory(new PropertyValueFactory<VorbisCommentTagField, String>("id"));
-        //trackColumn.setCellValueFactory(a -> a.);
         idColumn.prefWidthProperty().bind(table.widthProperty().divide(2));
         contentColumn.prefWidthProperty().bind(table.widthProperty().divide(2));
-        //contentColumn.setMinWidth(100);
         contentColumn.setCellValueFactory(new PropertyValueFactory<VorbisCommentTagField, String>("content"));
         contentColumn.setCellFactory(cellDataFeatures -> new StringTableCell());
-        //contentColumn.setCellFactory(cellDataFeatures -> new VorbisCommentTagFieldEditCell());
-        //contentColumn.setCellFactory(TextFieldTableCell.<VorbisCommentTagField>forTableColumn());
-        //contentColumn.setCellFactory(cellFactory);
-        //contentColumn.setCellFactory(col -> new EditCell<VorbisCommentTagField, String>());
-        //contentColumn.setCellFactory(col -> new TagEditingCell<VorbisCommentTagField, String>());
         contentColumn.setOnEditCommit(
                 (EventHandler<TableColumn.CellEditEvent<VorbisCommentTagField, String>>) cellEditEvent -> cellEditEvent.getTableView().getItems().get(
                         cellEditEvent.getTablePosition().getRow()).setContent(cellEditEvent.getNewValue()));

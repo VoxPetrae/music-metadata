@@ -1,4 +1,4 @@
-package voxpetrae.musicmetadata.album;
+package voxpetrae.musicmetadata.views;
 
 import java.nio.file.Paths;
 import java.nio.file.Path;
@@ -18,7 +18,7 @@ import voxpetrae.musicmetadata.guice.MusicMetadataModule;
 
 import voxpetrae.musicmetadata.models.AlbumTrack;
 import voxpetrae.musicmetadata.views.interfaces.TagView;
-import voxpetrae.musicmetadata.album.interfaces.TableBuilderInterface;
+import voxpetrae.musicmetadata.views.interfaces.TableBuilderInterface;
 import voxpetrae.musicmetadata.textfieldworkaround.StringTableCell;
 
 //@SuppressWarnings("unchecked")
