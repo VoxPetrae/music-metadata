@@ -9,3 +9,8 @@
 .marginalized-button {
     -fx-alignment: center;
 }
+.table-row-cell:hover {
+    -fx-border-color: green; /* Vertical Lines*/
+    -fx-control-inner-background: #c1c1c1;
+    -fx-border-width: 1;
+}

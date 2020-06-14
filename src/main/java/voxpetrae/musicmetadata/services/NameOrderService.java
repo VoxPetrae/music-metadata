@@ -18,8 +18,8 @@ import javafx.beans.value.ObservableValue;
 import voxpetrae.musicmetadata.common.NameOrder;
 import voxpetrae.musicmetadata.models.AlbumTrack;
 
-// The eternal dilemma: how do you name an interface that's only for DI? INameOrderService? NameOrderServiceInterface?
-// Or should the one implementing class be named NameOrderServiceImpl? Or maybe the solution below is the preferred one? I just don't know...
+// The eternal dilemma: how do you name an interface that's only for DI and has only one implementation? INameOrderService? NameOrderServiceInterface?
+// Or should the one implementing class be named NameOrderServiceImpl? Or maybe the solution below is the preferred one? Discuss in small groups!
 public class NameOrderService implements voxpetrae.musicmetadata.services.interfaces.NameOrderService {
 
     // Todo: This method returns a GUI component and should not be in the service layer.

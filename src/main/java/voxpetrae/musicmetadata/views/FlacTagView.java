@@ -8,13 +8,11 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import voxpetrae.musicmetadata.common.interfaces.IOHelperInterface;
-import voxpetrae.musicmetadata.textfieldworkaround.StringTableCell;
+import voxpetrae.musicmetadata.common.interfaces.IOHelper;
 import voxpetrae.musicmetadata.views.interfaces.TagView;
+import voxpetrae.musicmetadata.views.interfaces.TableBuilder;
 import voxpetrae.musicmetadata.services.interfaces.TagService;
 import org.jaudiotagger.tag.flac.FlacTag;
 import org.jaudiotagger.tag.vorbiscomment.VorbisCommentTagField;
@@ -26,10 +24,11 @@ import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
 
-@SuppressWarnings("unchecked")
+//@SuppressWarnings("unchecked")
 public class FlacTagView extends Stage implements TagView{
-    @Inject private IOHelperInterface _ioHelper;
+    @Inject private IOHelper _ioHelper;
     @Inject private TagService _tagService;
+    @Inject private TableBuilder<VorbisCommentTagField> _tableBuilder;
     
     public void initiate(Path filePath){
         if (_ioHelper.isAudioFile(filePath)){
@@ -58,7 +57,8 @@ public class FlacTagView extends Stage implements TagView{
         var cssPath = getClass().getResource("../css/musicmetadata.css").toExternalForm();
         scene.getStylesheets().add(cssPath);
         MenuBar menuBar = buildMenu();
-        TableView table = buildTable(fields);
+        TableView table = _tableBuilder.buildTable(fields);
+        //TableView table = buildTable(fields);
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(0, 10, 10, 0));
         ((VBox) scene.getRoot()).getChildren().addAll(menuBar, table);
@@ -82,38 +82,7 @@ public class FlacTagView extends Stage implements TagView{
         fileMenu.getProperties().put(MenuBar.class.getCanonicalName(), menuBar); // Hack to access Node from EventHandler
         return menuBar;
     }
-    // Todo: Maybe this should be refactored to a separate class, like we did in AlbumTableView. I'll think about it.
-    private TableView buildTable(ObservableList<VorbisCommentTagField> fields){
-        TableView table = new TableView();
-        table.getStyleClass().add("tableStyle");
-        table.setEditable(true);
-        TableColumn idColumn = new TableColumn("Tag ID");
-        TableColumn contentColumn = new TableColumn("Content");
-        idColumn.setMinWidth(100);
-        // The column's cell value factory is used to populate the column cells
-        idColumn.setCellValueFactory(new PropertyValueFactory<VorbisCommentTagField, String>("id"));
-        idColumn.prefWidthProperty().bind(table.widthProperty().divide(2));
-        contentColumn.prefWidthProperty().bind(table.widthProperty().divide(2));
-        contentColumn.setCellValueFactory(new PropertyValueFactory<VorbisCommentTagField, String>("content"));
-        contentColumn.setCellFactory(cellDataFeatures -> new StringTableCell());
-        contentColumn.setOnEditCommit(
-                (EventHandler<TableColumn.CellEditEvent<VorbisCommentTagField, String>>) cellEditEvent -> cellEditEvent.getTableView().getItems().get(
-                        cellEditEvent.getTablePosition().getRow()).setContent(cellEditEvent.getNewValue()));
-
-        table.getColumns().addAll(idColumn, contentColumn);
-        table.setItems(fields);
-        table.setRowFactory(tv -> {
-            TableRow<VorbisCommentTagField> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (!row.isEmpty() && event.getButton() == MouseButton.PRIMARY) { //             && event.getClickCount() == 2
-                    VorbisCommentTagField tagField = row.getItem();
-                    //System.out.println("Clicked: " + tagField.getId() + " = " + tagField.getContent());
-                }
-            });
-            return row ;
-        });
-        return table;
-    }
+    
     EventHandler<ActionEvent> exitHandler = new EventHandler<ActionEvent>(){
         @Override
         public void handle(ActionEvent event) {
@@ -127,6 +96,7 @@ public class FlacTagView extends Stage implements TagView{
             }
         }
     };
+
     /*
     Hack to access Stage from ActionEvent using Node properties
     */

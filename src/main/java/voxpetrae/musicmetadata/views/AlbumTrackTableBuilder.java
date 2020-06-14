@@ -15,14 +15,13 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import voxpetrae.musicmetadata.guice.MusicMetadataModule;
 
-
 import voxpetrae.musicmetadata.models.AlbumTrack;
 import voxpetrae.musicmetadata.views.interfaces.TagView;
-import voxpetrae.musicmetadata.views.interfaces.TableBuilderInterface;
+import voxpetrae.musicmetadata.views.interfaces.TableBuilder;
 import voxpetrae.musicmetadata.textfieldworkaround.StringTableCell;
 
 //@SuppressWarnings("unchecked")
-public class TableBuilder implements TableBuilderInterface {
+public class AlbumTrackTableBuilder<T> implements TableBuilder<AlbumTrack> {
     @SuppressWarnings("unchecked")
     public TableView buildTable(ObservableList<AlbumTrack> tracks){
         // Create a TableView and make its AlbumTrack items observable and editable

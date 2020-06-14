@@ -5,10 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import voxpetrae.musicmetadata.common.interfaces.IOHelperInterface;
-import voxpetrae.musicmetadata.common.IOHelper;
 
-public class IOHelper extends Stage implements IOHelperInterface {
+public class IOHelper extends Stage implements voxpetrae.musicmetadata.common.interfaces.IOHelper {
 
     private String folderPath;
     

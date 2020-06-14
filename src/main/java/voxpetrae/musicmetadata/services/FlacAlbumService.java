@@ -23,12 +23,12 @@ import org.jaudiotagger.tag.vorbiscomment.VorbisCommentTagField;
 import voxpetrae.musicmetadata.services.interfaces.AlbumService;
 import voxpetrae.musicmetadata.models.AlbumTrack;
 import voxpetrae.musicmetadata.services.interfaces.TagService;
-import voxpetrae.musicmetadata.common.interfaces.IOHelperInterface;
+import voxpetrae.musicmetadata.common.interfaces.IOHelper;
 
 @SuppressWarnings("unchecked")
 public class FlacAlbumService implements AlbumService {
     @Inject
-    private IOHelperInterface _ioHelper;
+    private IOHelper _ioHelper;
     @Inject
     private TagService _flacTagService;
     private String albumName;

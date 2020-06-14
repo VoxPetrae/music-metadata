@@ -15,7 +15,7 @@ import javafx.stage.Stage;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jaudiotagger.audio.exceptions.*;
-import voxpetrae.musicmetadata.album.interfaces.AlbumView;
+import voxpetrae.musicmetadata.views.interfaces.AlbumView;
 import voxpetrae.musicmetadata.guice.MusicMetadataModule;
 
 public class MainView extends Application {
@@ -31,11 +31,11 @@ public class MainView extends Application {
         this._albumView = injector.getInstance(AlbumView.class);
         
         final String MENU_BAR_ID = "#menuBar";
-        final VBox vbox = new VBox();
-        Scene scene = new Scene(vbox, 809, 809);
+        final VBox vBox = new VBox();
+        Scene scene = new Scene(vBox, 809, 809);
         MenuBar menuBar = buildMenu();
         menuBar.setId(MENU_BAR_ID);
-        ((VBox) scene.getRoot()).getChildren().addAll(menuBar);
+        vBox.getChildren().addAll(menuBar);
         primaryStage.setTitle("Music Metadata - A minimalistic metadata handler");
         primaryStage.setScene(scene);
         //scene.setFill(Color.BLUEVIOLET); // just playing around
@@ -47,6 +47,7 @@ public class MainView extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> System.out.println("Shutdown hook test")));
         launch(args);
     }
 
