@@ -32,6 +32,7 @@ import org.jaudiotagger.audio.exceptions.*;
 import voxpetrae.musicmetadata.models.AlbumTrack;
 import voxpetrae.musicmetadata.views.interfaces.AlbumView;
 import voxpetrae.musicmetadata.views.interfaces.TableBuilder;
+import voxpetrae.musicmetadata.views.interfaces.NameOrderView;
 import voxpetrae.musicmetadata.common.interfaces.IOHelper;
 import voxpetrae.musicmetadata.common.NameOrder;
 import voxpetrae.musicmetadata.common.NameTagsToChange;
@@ -47,6 +48,7 @@ public class AlbumTableView extends Stage implements AlbumView {
     @Inject private IOHelper _ioHelper;
     @Inject private AlbumService _flacAlbumService;
     @Inject private TableBuilder<AlbumTrack> _tableBuilder;
+    @Inject private NameOrderView _nameOrderView;
     @Inject private NameOrderService _nameOrderService;
 
     public void initiate() {
@@ -176,7 +178,7 @@ public class AlbumTableView extends Stage implements AlbumView {
             List<String> nameFieldsToChange = new ArrayList<>();
                         HashMap<String, Boolean> prefs = new HashMap<>();
             // Open dialog window with name alternatives
-            Dialog dialog = _nameOrderService.createNameTagChooser(
+            Dialog dialog = _nameOrderView.createNameTagChooser(
                     param -> prefs.put("ARTIST", param ? true : false),
                     param -> prefs.put("ALBUMARTIST", param  ? true : false),
                     param -> prefs.put("COMPOSER", param  ? true : false),

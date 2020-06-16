@@ -9,6 +9,7 @@ import voxpetrae.musicmetadata.views.FlacTagTableBuilder;
 import voxpetrae.musicmetadata.views.AlbumTableView;
 import voxpetrae.musicmetadata.views.interfaces.TagView;
 import voxpetrae.musicmetadata.views.FlacTagView;
+import voxpetrae.musicmetadata.views.interfaces.NameOrderView;
 import voxpetrae.musicmetadata.common.interfaces.IOHelper;
 import voxpetrae.musicmetadata.services.interfaces.AlbumService; 
 import voxpetrae.musicmetadata.services.FlacAlbumService; 
@@ -26,6 +27,7 @@ public class MusicMetadataModule extends AbstractModule {
         bind(AlbumService.class).to(FlacAlbumService.class);
         bind(TagService.class).to(FlacTagService.class);
         bind(NameOrderService.class).to(voxpetrae.musicmetadata.services.NameOrderService.class);
+        bind(NameOrderView.class).to(voxpetrae.musicmetadata.views.NameOrderView.class);
         bind(new TypeLiteral<TableBuilder<AlbumTrack>>(){}).to(new TypeLiteral<AlbumTrackTableBuilder<AlbumTrack>>(){});
         bind(new TypeLiteral<TableBuilder<VorbisCommentTagField>>(){}).to(new TypeLiteral<FlacTagTableBuilder<VorbisCommentTagField>>(){});
     }
