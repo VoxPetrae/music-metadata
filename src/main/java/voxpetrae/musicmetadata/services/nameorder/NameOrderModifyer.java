@@ -1,36 +1,11 @@
-package voxpetrae.musicmetadata.services;
+package voxpetrae.musicmetadata.services.nameorder;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.collections.ObservableList;
-import voxpetrae.musicmetadata.common.NameOrder;
-import voxpetrae.musicmetadata.models.AlbumTrack;
+import voxpetrae.musicmetadata.services.nameorder.NameOrder;
 
-// The eternal dilemma: how do you name an interface that's only for DI and has only one implementation? INameOrderService? NameOrderServiceInterface?
-// Or should the one implementing class be named NameOrderServiceImpl? Or maybe the solution below is the preferred one? Discuss in small groups!
-public class NameOrderService implements voxpetrae.musicmetadata.services.interfaces.NameOrderService {
-
-    public void changeNameOrder(ObservableList<AlbumTrack> albumTracks, List<String> nameTagFieldsToChange, String nameOrder) {
-        nameTagFieldsToChange.forEach((String fname) -> {
-            // System.out.println("--- " + fname + ", " + albumTracks.size());
-        });
-
-        albumTracks.forEach((AlbumTrack track) -> {
-            if (nameTagFieldsToChange.contains("ARTIST"))
-                track.setArtist(changeNameOrder(track.getArtist(), nameOrder));
-
-            if (nameTagFieldsToChange.contains("ALBUMARTIST"))
-                track.setAlbumArtist(changeNameOrder(track.getAlbumArtist(), nameOrder));
-
-            if (nameTagFieldsToChange.contains("COMPOSER"))
-                track.setComposer(changeNameOrder(track.getComposer(), nameOrder));
-
-            track.setUpdated(true);
-        });
-
-    }
-
-    private String changeNameOrder(String nameString, String desiredNameOrder) {
+public class NameOrderModifyer implements voxpetrae.musicmetadata.services.interfaces.NameOrderModifyer {
+    public String setNameOrder(String nameString, String desiredNameOrder) {
         String[] names = nameString.split(";");
         List<String> alteredNames = new ArrayList<>();
         for (String name : names) {
@@ -50,7 +25,6 @@ public class NameOrderService implements voxpetrae.musicmetadata.services.interf
         String stringifiedList = convertListToSemicolonSeparatedString((alteredNames));
         return stringifiedList;
     }
-
     private static NameOrder detectNameOrder(String name) {
         if (name.contains(" ") && !name.contains(",")) {
             return NameOrder.GIVENNAMESPACESURNAME;

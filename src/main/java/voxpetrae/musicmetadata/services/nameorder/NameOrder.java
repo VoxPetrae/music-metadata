@@ -1,4 +1,4 @@
-package voxpetrae.musicmetadata.common;
+package voxpetrae.musicmetadata.services.nameorder;
 
 public enum NameOrder {
     GIVENNAMESPACESURNAME,

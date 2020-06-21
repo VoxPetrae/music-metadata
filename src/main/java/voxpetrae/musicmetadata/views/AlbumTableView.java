@@ -34,8 +34,8 @@ import voxpetrae.musicmetadata.views.interfaces.AlbumView;
 import voxpetrae.musicmetadata.views.interfaces.TableBuilder;
 import voxpetrae.musicmetadata.views.interfaces.NameOrderView;
 import voxpetrae.musicmetadata.common.interfaces.IOHelper;
-import voxpetrae.musicmetadata.common.NameOrder;
-import voxpetrae.musicmetadata.common.NameTagsToChange;
+import voxpetrae.musicmetadata.services.nameorder.NameOrder;
+import voxpetrae.musicmetadata.services.nameorder.NameTagsToChange;
 import voxpetrae.musicmetadata.services.interfaces.AlbumService;
 import voxpetrae.musicmetadata.services.interfaces.NameOrderService;
 
@@ -214,7 +214,7 @@ public class AlbumTableView extends Stage implements AlbumView {
                         _nameOrderService.changeNameOrder(tracks, nameFieldsToChange, nameOrder);
                         if (tracks.get(0).isUpdated()){
                             toggleButtonStatus(true);
-                            alert.setAlertType(AlertType.CONFIRMATION); 
+                            alert.setAlertType(AlertType.INFORMATION); 
                             alert.setHeaderText(null);
                             alert.setTitle(null);
                             alert.setContentText("View your changes before saving.");

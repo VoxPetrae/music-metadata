@@ -16,6 +16,7 @@ import voxpetrae.musicmetadata.services.FlacAlbumService;
 import voxpetrae.musicmetadata.services.interfaces.TagService; 
 import voxpetrae.musicmetadata.services.FlacTagService;
 import voxpetrae.musicmetadata.services.interfaces.NameOrderService; 
+import voxpetrae.musicmetadata.services.interfaces.NameOrderModifyer;
 import voxpetrae.musicmetadata.models.AlbumTrack;
 import org.jaudiotagger.tag.vorbiscomment.VorbisCommentTagField;
 
@@ -26,7 +27,8 @@ public class MusicMetadataModule extends AbstractModule {
         bind(IOHelper.class).to(voxpetrae.musicmetadata.common.IOHelper.class);
         bind(AlbumService.class).to(FlacAlbumService.class);
         bind(TagService.class).to(FlacTagService.class);
-        bind(NameOrderService.class).to(voxpetrae.musicmetadata.services.NameOrderService.class);
+        bind(NameOrderService.class).to(voxpetrae.musicmetadata.services.nameorder.NameOrderService.class);
+        bind(NameOrderModifyer.class).to(voxpetrae.musicmetadata.services.nameorder.NameOrderModifyer.class);
         bind(NameOrderView.class).to(voxpetrae.musicmetadata.views.NameOrderView.class);
         bind(new TypeLiteral<TableBuilder<AlbumTrack>>(){}).to(new TypeLiteral<AlbumTrackTableBuilder<AlbumTrack>>(){});
         bind(new TypeLiteral<TableBuilder<VorbisCommentTagField>>(){}).to(new TypeLiteral<FlacTagTableBuilder<VorbisCommentTagField>>(){});

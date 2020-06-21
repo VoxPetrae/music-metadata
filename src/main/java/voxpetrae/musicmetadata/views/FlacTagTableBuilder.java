@@ -9,6 +9,7 @@ import org.jaudiotagger.tag.vorbiscomment.VorbisCommentTagField;
 import voxpetrae.musicmetadata.views.interfaces.TableBuilder;
 import voxpetrae.musicmetadata.textfieldworkaround.StringTableCell;
 
+@SuppressWarnings("unchecked")
 public class FlacTagTableBuilder<T> implements TableBuilder<VorbisCommentTagField> {
     public TableView buildTable(ObservableList<VorbisCommentTagField> fields){
         TableView table = new TableView();
