@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
 
-//@SuppressWarnings("unchecked")
+@SuppressWarnings("unchecked")
 public class FlacTagView extends Stage implements TagView{
     @Inject private IOHelper _ioHelper;
     @Inject private TagService _tagService;

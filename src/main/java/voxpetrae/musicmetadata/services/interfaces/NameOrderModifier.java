@@ -1,5 +1,5 @@
 package voxpetrae.musicmetadata.services.interfaces;
 
-public interface NameOrderModifyer {
+public interface NameOrderModifier {
     String setNameOrder(String nameString, String desiredNameOrder);
 }
