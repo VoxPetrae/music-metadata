@@ -27,10 +27,8 @@ import voxpetrae.musicmetadata.common.interfaces.IOHelper;
 
 @SuppressWarnings("unchecked")
 public class FlacAlbumService implements AlbumService {
-    @Inject
-    private IOHelper _ioHelper;
-    @Inject
-    private TagService _flacTagService;
+    @Inject private IOHelper _ioHelper;
+    @Inject private TagService _flacTagService;
     private String albumName;
     private String albumArtist;
 
@@ -43,7 +41,7 @@ public class FlacAlbumService implements AlbumService {
         var tkon = Paths.get(folderPath).toAbsolutePath();
         try (Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
             paths.forEach((Path filePath) -> {
-                if (_ioHelper.isAudioFile(filePath)) {
+                if (_ioHelper.isAudioFile(filePath, "flac")) {
                     try {
                         var flacTag = (FlacTag) _flacTagService.getTag(_ioHelper.getFileFromFilePath(filePath));
                         AudioFile audioFile = null;
@@ -100,6 +98,47 @@ public class FlacAlbumService implements AlbumService {
         return albumTracks;
     }
 
+    public boolean saveAlbumTracksToFile(ObservableList<AlbumTrack> albumTracks, String folderPath){
+        try(Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
+            paths.forEach((Path filePath) -> {
+                if (_ioHelper.isAudioFile(filePath, "flac")) {
+                    var file = filePath.toFile();
+                    FlacTag tag = (FlacTag) _flacTagService.getTag(file);
+                    if (tag != null && !tag.isEmpty()){
+                        int trackNumber = Integer.parseInt(tag.getFirst(FieldKey.TRACK));
+                        AlbumTrack track = getAlbumTrack(albumTracks, trackNumber);
+                        var title = tag.getFirst(FieldKey.TITLE);
+                        var artists = convertTagListToSemicolonSeparatedString(tag, FieldKey.ARTIST);
+                        var albumArtists = convertTagListToSemicolonSeparatedString(tag, FieldKey.ALBUM_ARTIST);
+                        var composers = convertTagListToSemicolonSeparatedString(tag, FieldKey.COMPOSER);
+                        System.out.println(track.getTrackNumber() + " = " + track.getTitle() + ", ARTIST: " + artists + " (" + track.getArtist() + "), ALBUM ARTIST: " + albumArtists +
+                        " (" + track.getAlbumArtist() + "), COMPOSER: " + composers + " (" + track.getComposer() + "), " +
+                        artists.equals(track.getArtist()) + ", " + albumArtists.equals(track.getAlbumArtist()) + ", " +
+                        composers.equals(track.getComposer()) + "!");
+                        // 1: Hur mappa alla värden i track mot taggarna i flactag?
+                        // 2: Om man låter AlbumTrack ha dynamiska properties som får sina värden vid inläsning av flac-filen.
+                        _flacTagService.updateTag(tag, file);
+                        track.setUnsaved(false);
+                        //albumTracks.add(new AlbumTrack(track, title, artists, albumArtists, composers, filePath.toString(), false));
+                    }
+                    else {
+                        System.out.println("Not a real ID tag: " + tag.toString());
+                    }
+                }
+                else
+                {
+                    System.out.println(filePath + " is not a flac file!");
+                }
+            });
+        } catch (IOException ex) {
+            System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + ex);
+            return false;
+        }
+        /* albumTracks.forEach((AlbumTrack track) -> {
+            track.setUpdated(false);
+        }); */
+        return true;
+    }
     public String getAlbumName() {
         return albumName;
     }
@@ -118,6 +157,17 @@ public class FlacAlbumService implements AlbumService {
                 sb.append("; ");
         });
         return sb.toString();
+    }
+    
+    private AlbumTrack getAlbumTrack(ObservableList<AlbumTrack> albumTracks, int trackNumber){
+        int size = albumTracks.size();
+        for(int index = 0; index < size; index++){
+            AlbumTrack currentTrack = albumTracks.get(index);
+            if (currentTrack.getTrackNumber() == trackNumber){
+                return currentTrack;
+            }
+        }
+        return null;
     }
 
     /**

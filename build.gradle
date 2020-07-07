@@ -30,12 +30,12 @@ repositories {
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     implementation 'com.google.guava:guava:26.0-jre'
-
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
-
     implementation group: 'com.google.inject', name: 'guice', version: '4.2.2'
     implementation 'net.jthink:jaudiotagger:2.2.5'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.3'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.3'
 }
 
 javafx {

@@ -31,7 +31,8 @@ public class IOHelper extends Stage implements voxpetrae.musicmetadata.common.in
     public File getFileFromFilePath(Path filePath){
         return filePath.toFile();
     }
-    public Boolean isAudioFile(Path filePath){
-        return Files.isRegularFile(filePath) && filePath.toString().toLowerCase().endsWith("flac");
+    // Todo: The fileSuffix thing could be smoother, ponder alternative solution.
+    public Boolean isAudioFile(Path filePath, String fileSuffix){
+        return Files.isRegularFile(filePath) && filePath.toString().toLowerCase().endsWith(fileSuffix);
    }
 }

@@ -6,5 +6,5 @@ public interface IOHelper {
     String getFolderPath();
     void setFolderPath(String title);
     File getFileFromFilePath(Path filePath);
-    Boolean isAudioFile(Path filePath);
+    Boolean isAudioFile(Path filePath, String fileSuffix);
 }

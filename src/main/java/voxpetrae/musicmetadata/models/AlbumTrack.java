@@ -13,9 +13,9 @@ public class AlbumTrack {
     private final StringProperty genre = new SimpleStringProperty();
     private final StringProperty year = new SimpleStringProperty();
     private final StringProperty filePath = new SimpleStringProperty();
-    private final BooleanProperty updated = new SimpleBooleanProperty();
+    private final BooleanProperty unsaved = new SimpleBooleanProperty();
 
-    public AlbumTrack (int trackNumber, String title, String artist, String albumArtist, String composer, String genre, String year, String filePath, boolean updated){
+    public AlbumTrack (int trackNumber, String title, String artist, String albumArtist, String composer, String genre, String year, String filePath, boolean unsaved){
         setTrackNumber(trackNumber);
         setTitle(title);
         setArtist(artist);
@@ -24,7 +24,7 @@ public class AlbumTrack {
         setGenre(genre);
         setYear(year);
         setFilePath(filePath);
-        setUpdated(updated);
+        setUnsaved(unsaved);
     }
     public int getTrackNumber() {
         return trackNumber.get();
@@ -120,15 +120,15 @@ public class AlbumTrack {
         this.filePath.set(filePath);
     }
 
-    public boolean isUpdated() {
-        return updated.get();
+    public boolean isUnsaved() {
+        return unsaved.get();
     }
 
-    public BooleanProperty updatedProperty() {
-        return updated;
+    public BooleanProperty unsavedProperty() {
+        return unsaved;
     }
 
-    public void setUpdated(boolean updated) {
-        this.updated.set(updated);
+    public void setUnsaved(boolean unsaved) {
+        this.unsaved.set(unsaved);
     }
 }

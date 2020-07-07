@@ -75,8 +75,8 @@ public class AlbumTrackTableBuilder<T> implements TableBuilder<AlbumTrack> {
                 (EventHandler<TableColumn.CellEditEvent<AlbumTrack, String>>) cellEditEvent -> cellEditEvent.getTableView().getItems().get(
                         cellEditEvent.getTablePosition().getRow()).setYear(cellEditEvent.getNewValue()));
         // Updated column
-        TableColumn updatedColumn = new TableColumn<>("Updated");
-        updatedColumn.setCellValueFactory(new PropertyValueFactory<>("updated"));
+        TableColumn unsavedColumn = new TableColumn<>("Unsaved");
+        unsavedColumn.setCellValueFactory(new PropertyValueFactory<>("unsaved"));
         TableColumn viewAllColumn = new TableColumn("View all tags");
         viewAllColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<AlbumTrack, Boolean>, ObservableValue<Boolean>>(){
             @Override
@@ -90,7 +90,7 @@ public class AlbumTrackTableBuilder<T> implements TableBuilder<AlbumTrack> {
                 return new ButtonCell();
             }
         });
-        table.getColumns().addAll(trackColumn, titleColumn, artistColumn, albumArtistColumn, composerColumn, genreColumn, yearColumn, updatedColumn, viewAllColumn);
+        table.getColumns().addAll(trackColumn, titleColumn, artistColumn, albumArtistColumn, composerColumn, genreColumn, yearColumn, unsavedColumn, viewAllColumn);
         table.setItems(tracks);
         return table;
     }

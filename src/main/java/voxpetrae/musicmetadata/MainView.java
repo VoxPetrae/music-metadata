@@ -19,7 +19,7 @@ import voxpetrae.musicmetadata.views.interfaces.AlbumView;
 import voxpetrae.musicmetadata.guice.MusicMetadataModule;
 
 public class MainView extends Application {
-    
+    private static final org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(MainView.class);
     private AlbumView _albumView;
 
     @Override
@@ -47,6 +47,7 @@ public class MainView extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        logger.info("#TEST");
         Runtime.getRuntime().addShutdownHook(new Thread(() -> System.out.println("Shutdown hook test")));
         launch(args);
     }

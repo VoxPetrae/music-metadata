@@ -31,7 +31,7 @@ public class FlacTagView extends Stage implements TagView{
     @Inject private TableBuilder<VorbisCommentTagField> _tableBuilder;
     
     public void initiate(Path filePath){
-        if (_ioHelper.isAudioFile(filePath)){
+        if (_ioHelper.isAudioFile(filePath, "flac")){
             File file = filePath.toFile();
             FlacTag tag = (FlacTag) _tagService.getTag(file);
             if (tag == null){

@@ -45,6 +45,7 @@ public class AlbumTableView extends Stage implements AlbumView {
     private Button quitButton;
     private Button saveNameOrderChangesButton;
     private Alert alert;
+    private String folderPath;
     @Inject private IOHelper _ioHelper;
     @Inject private AlbumService _flacAlbumService;
     @Inject private TableBuilder<AlbumTrack> _tableBuilder;
@@ -53,7 +54,7 @@ public class AlbumTableView extends Stage implements AlbumView {
 
     public void initiate() {
         _ioHelper.setFolderPath("Choose folder");
-        String folderPath = _ioHelper.getFolderPath();
+        folderPath = _ioHelper.getFolderPath();
         if (folderPath != null){
             tracks = _flacAlbumService.getAlbumTracks(folderPath);    
         }
@@ -142,7 +143,8 @@ public class AlbumTableView extends Stage implements AlbumView {
         @Override
         public void handle(ActionEvent event) {
             System.out.println("Saving changes...");
-            //albumOperations.saveAlbumTracksToFlacFile(tracks);
+            folderPath = _ioHelper.getFolderPath();
+            _flacAlbumService.saveAlbumTracksToFile(tracks, folderPath);
             toggleButtonStatus(true);
         }
     };
@@ -212,7 +214,7 @@ public class AlbumTableView extends Stage implements AlbumView {
                             ", composers: " + prefs.get("COMPOSER") + ", chosen name order: " + nameOrder);
                     if (nameFieldsToChange.size() > 0){
                         _nameOrderService.changeNameOrder(tracks, nameFieldsToChange, nameOrder);
-                        if (tracks.get(0).isUpdated()){
+                        if (tracks.get(0).isUnsaved()){
                             toggleButtonStatus(true);
                             alert.setAlertType(AlertType.INFORMATION); 
                             alert.setHeaderText(null);

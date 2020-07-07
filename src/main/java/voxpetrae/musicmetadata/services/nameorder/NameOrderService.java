@@ -23,7 +23,7 @@ public class NameOrderService implements voxpetrae.musicmetadata.services.interf
             if (nameTagFieldsToChange.contains("COMPOSER"))
                 track.setComposer(_nameOrderModifier.setNameOrder(track.getComposer(), nameOrder));
 
-            track.setUpdated(true);
+            track.setUnsaved(true);
         });
     }
 }

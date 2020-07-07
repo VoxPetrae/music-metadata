@@ -14,6 +14,7 @@ public interface AlbumService {
      * @return A list with AlbumTracks representing the music album's songs. 
      */
     ObservableList<AlbumTrack> getAlbumTracks(String folderPath);
+    boolean saveAlbumTracksToFile(ObservableList<AlbumTrack> albumTracks, String folderPath);
     String getAlbumName();
     String getAlbumArtist();
 }
