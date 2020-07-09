@@ -1,6 +1,10 @@
 package voxpetrae.musicmetadata.views;
 
 import java.util.function.Consumer;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ToggleGroup;
@@ -11,8 +15,73 @@ import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javax.inject.Inject;
+import voxpetrae.musicmetadata.services.interfaces.NameOrderService;
+import voxpetrae.musicmetadata.models.AlbumTrack;
+import voxpetrae.musicmetadata.services.nameorder.NameOrder;
+import voxpetrae.musicmetadata.services.nameorder.NameTagsToChange;
 
 public class NameOrderView implements voxpetrae.musicmetadata.views.interfaces.NameOrderView {
+    @Inject private NameOrderService _nameOrderService;
+
+    @SuppressWarnings("unchecked")
+    public void selectNameOrder(ObservableList<AlbumTrack> tracks){
+        List<String> nameFieldsToChange = new ArrayList<>();
+                        HashMap<String, Boolean> prefs = new HashMap<>();
+            // Open dialog window with name alternatives
+            Dialog dialog = createNameTagChooser(
+                    param -> prefs.put("ARTIST", param ? true : false),
+                    param -> prefs.put("ALBUMARTIST", param  ? true : false),
+                    param -> prefs.put("COMPOSER", param  ? true : false),
+                    param -> prefs.put("STRAIGHT_NAMEORDER", param  ? true : false));
+            // Get response
+            //Optional<ButtonType> result = (Optional<ButtonType>) dialog.showAndWait();
+            dialog.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK){
+                    final String nameOrder;
+                    if (prefs.get("ARTIST") != null)
+                        nameFieldsToChange.add(NameTagsToChange.ARTIST.name());
+                    if (prefs.get("ALBUMARTIST") != null)
+                        nameFieldsToChange.add(NameTagsToChange.ALBUMARTIST.name());
+                    if (prefs.get("COMPOSER") != null)
+                        nameFieldsToChange.add(NameTagsToChange.COMPOSER.name());
+                    // Notice: STRAIGHT_NAMEORDER = null means it's not registered by the listener,
+                    // but since it's pre-selected it still counts as true. Tricky yes?
+                    if(prefs.get("STRAIGHT_NAMEORDER") == null){
+                        System.out.println("STRAIGHT IS SELECTED");
+                        nameOrder = NameOrder.GIVENNAMESPACESURNAME.name();
+                    }
+                    else if(prefs.get("STRAIGHT_NAMEORDER")){
+                        System.out.println("STRAIGHT IS SELECTED");
+                        nameOrder = NameOrder.GIVENNAMESPACESURNAME.name();
+                    }
+                    else{
+                        System.out.println("REVERSE IS SELECTED");
+                        nameOrder = NameOrder.SURNAMECOMMASPACEGIVENNAME.name();
+                    }
+                    System.out.println("Artists: " + prefs.get("ARTIST") + ", albumArtists: " + prefs.get("ALBUMARTIST") +
+                            ", composers: " + prefs.get("COMPOSER") + ", chosen name order: " + nameOrder);
+                    if (nameFieldsToChange.size() > 0){
+                        _nameOrderService.changeNameOrder(tracks, nameFieldsToChange, nameOrder);
+                        // if (tracks.get(0).isUnsaved()){
+                        //     toggleButtonStatus(true);
+                        //     alert.setAlertType(AlertType.INFORMATION); 
+                        //     alert.setHeaderText(null);
+                        //     alert.setTitle(null);
+                        //     alert.setContentText("View your changes before saving.");
+                        //     alert.show();
+                        // }
+                    }
+                    else {
+                        System.out.println("No name tags choosen!");
+                    }
+                }
+                else{
+                    System.out.println("Name order change aborted");
+                }
+
+            });
+    }
     public Dialog<String> createNameTagChooser(Consumer<Boolean> artistsAction, Consumer<Boolean> albumArtistsAction,
             Consumer<Boolean> composersAction, Consumer<Boolean> straightNameOrderAction) {
         // Create dialog

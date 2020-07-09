@@ -1,9 +1,6 @@
 package voxpetrae.musicmetadata.views;
 
 import java.io.File;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -13,8 +10,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.event.ActionEvent;
@@ -34,10 +29,8 @@ import voxpetrae.musicmetadata.views.interfaces.AlbumView;
 import voxpetrae.musicmetadata.views.interfaces.TableBuilder;
 import voxpetrae.musicmetadata.views.interfaces.NameOrderView;
 import voxpetrae.musicmetadata.common.interfaces.IOHelper;
-import voxpetrae.musicmetadata.services.nameorder.NameOrder;
-import voxpetrae.musicmetadata.services.nameorder.NameTagsToChange;
+import voxpetrae.musicmetadata.common.Props;
 import voxpetrae.musicmetadata.services.interfaces.AlbumService;
-import voxpetrae.musicmetadata.services.interfaces.NameOrderService;
 
 @SuppressWarnings("unchecked")
 public class AlbumTableView extends Stage implements AlbumView {
@@ -50,7 +43,6 @@ public class AlbumTableView extends Stage implements AlbumView {
     @Inject private AlbumService _flacAlbumService;
     @Inject private TableBuilder<AlbumTrack> _tableBuilder;
     @Inject private NameOrderView _nameOrderView;
-    @Inject private NameOrderService _nameOrderService;
 
     public void initiate() {
         _ioHelper.setFolderPath("Choose folder");
@@ -109,7 +101,7 @@ public class AlbumTableView extends Stage implements AlbumView {
         label.setPadding(new Insets(10));
         label.getStyleClass().add("tableLable");
         String folderPath = _ioHelper.getFolderPath();
-        String imagePath = folderPath + "\\Folder.jpg";
+        String imagePath = folderPath + (String) Props.prop("albumcoverfilename");//"\\Folder.jpg"
         Image image = new Image(new File(imagePath).toURI().toString());
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(80);
@@ -175,63 +167,17 @@ public class AlbumTableView extends Stage implements AlbumView {
          * @param event - the click on the menu item
          */
         @Override
-        @SuppressWarnings("unchecked")
         public void handle(ActionEvent event) {
-            List<String> nameFieldsToChange = new ArrayList<>();
-                        HashMap<String, Boolean> prefs = new HashMap<>();
-            // Open dialog window with name alternatives
-            Dialog dialog = _nameOrderView.createNameTagChooser(
-                    param -> prefs.put("ARTIST", param ? true : false),
-                    param -> prefs.put("ALBUMARTIST", param  ? true : false),
-                    param -> prefs.put("COMPOSER", param  ? true : false),
-                    param -> prefs.put("STRAIGHT_NAMEORDER", param  ? true : false));
-            // Get response
-            //Optional<ButtonType> result = (Optional<ButtonType>) dialog.showAndWait();
-            dialog.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK){
-                    final String nameOrder;
-                    if (prefs.get("ARTIST") != null)
-                        nameFieldsToChange.add(NameTagsToChange.ARTIST.name());
-                    if (prefs.get("ALBUMARTIST") != null)
-                        nameFieldsToChange.add(NameTagsToChange.ALBUMARTIST.name());
-                    if (prefs.get("COMPOSER") != null)
-                        nameFieldsToChange.add(NameTagsToChange.COMPOSER.name());
-                    // Notice: STRAIGHT_NAMEORDER = null means it's not registered by the listener,
-                    // but since it's pre-selected it still counts as true. Tricky yes?
-                    if(prefs.get("STRAIGHT_NAMEORDER") == null){
-                        System.out.println("STRAIGHT IS SELECTED");
-                        nameOrder = NameOrder.GIVENNAMESPACESURNAME.name();
-                    }
-                    else if(prefs.get("STRAIGHT_NAMEORDER")){
-                        System.out.println("STRAIGHT IS SELECTED");
-                        nameOrder = NameOrder.GIVENNAMESPACESURNAME.name();
-                    }
-                    else{
-                        System.out.println("REVERSE IS SELECTED");
-                        nameOrder = NameOrder.SURNAMECOMMASPACEGIVENNAME.name();
-                    }
-                    System.out.println("Artists: " + prefs.get("ARTIST") + ", albumArtists: " + prefs.get("ALBUMARTIST") +
-                            ", composers: " + prefs.get("COMPOSER") + ", chosen name order: " + nameOrder);
-                    if (nameFieldsToChange.size() > 0){
-                        _nameOrderService.changeNameOrder(tracks, nameFieldsToChange, nameOrder);
-                        if (tracks.get(0).isUnsaved()){
-                            toggleButtonStatus(true);
-                            alert.setAlertType(AlertType.INFORMATION); 
-                            alert.setHeaderText(null);
-                            alert.setTitle(null);
-                            alert.setContentText("View your changes before saving.");
-                            alert.show();
-                        }
-                    }
-                    else {
-                        System.out.println("No name tags choosen!");
-                    }
-                }
-                else{
-                    System.out.println("Name order change aborted");
-                }
-
-            });
+            _nameOrderView.selectNameOrder(tracks);
+            if (tracks.get(0).isUnsaved()){
+                toggleButtonStatus(true);
+                alert = new Alert(AlertType.NONE); 
+                alert.setAlertType(AlertType.INFORMATION); 
+                alert.setHeaderText(null);
+                alert.setTitle(null);
+                alert.setContentText("View your changes before saving.");
+                alert.show();
+            }
             
         }
     };
