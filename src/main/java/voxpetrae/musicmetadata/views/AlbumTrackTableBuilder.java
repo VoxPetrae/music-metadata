@@ -23,61 +23,62 @@ import voxpetrae.musicmetadata.textfieldworkaround.StringTableCell;
 //@SuppressWarnings("unchecked")
 public class AlbumTrackTableBuilder<T> implements TableBuilder<AlbumTrack> {
     @SuppressWarnings("unchecked")
-    public TableView buildTable(ObservableList<AlbumTrack> tracks){
+    public TableView<AlbumTrack> buildTable(ObservableList<AlbumTrack> tracks){
         // Create a TableView and make its AlbumTrack items observable and editable
-        TableView<AlbumTrack> table = new TableView();
+        
+        TableView<AlbumTrack> table = new TableView<AlbumTrack>();
         table.setEditable(true);
         table.setId("tracks");
-        TableColumn<AlbumTrack, Number> trackColumn = new TableColumn("Track no.");
+        TableColumn<AlbumTrack, Number> trackColumn = new TableColumn<AlbumTrack, Number>("Track no.");
         trackColumn.setCellValueFactory(new PropertyValueFactory<>("trackNumber"));
         // Title column
-        TableColumn titleColumn = new TableColumn("Title");
+        TableColumn<AlbumTrack, String> titleColumn = new TableColumn<AlbumTrack, String>("Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<AlbumTrack, String>("title"));
-        titleColumn.setCellFactory(cellDataFeatures -> new StringTableCell());
+        titleColumn.setCellFactory(cellDataFeatures -> new StringTableCell<AlbumTrack,String>());
         titleColumn.setOnEditCommit(
                 (EventHandler<TableColumn.CellEditEvent<AlbumTrack, String>>) cellEditEvent -> cellEditEvent.getTableView().getItems().get(
                         cellEditEvent.getTablePosition().getRow()).setTitle(cellEditEvent.getNewValue()));
         // Artist column
-        TableColumn artistColumn = new TableColumn("Artist");
+        TableColumn<AlbumTrack, String> artistColumn = new TableColumn<AlbumTrack, String>("Artist");
         artistColumn.setCellValueFactory(new PropertyValueFactory<>("artist"));
-        artistColumn.setCellFactory(cellDataFeatures -> new StringTableCell());
+        artistColumn.setCellFactory(cellDataFeatures -> new StringTableCell<AlbumTrack,String>());
         artistColumn.setOnEditCommit(
                 (EventHandler<TableColumn.CellEditEvent<AlbumTrack, String>>) cellEditEvent -> cellEditEvent.getTableView().getItems().get(
                         cellEditEvent.getTablePosition().getRow()).setArtist(cellEditEvent.getNewValue()));
         // Album artist column
-        TableColumn albumArtistColumn = new TableColumn("Album Artist");
+        TableColumn<AlbumTrack, String> albumArtistColumn = new TableColumn<AlbumTrack, String>("Album Artist");
         albumArtistColumn.setCellValueFactory(new PropertyValueFactory<>("albumArtist"));
-        albumArtistColumn.setCellFactory(cellDataFeatures -> new StringTableCell());
+        albumArtistColumn.setCellFactory(cellDataFeatures -> new StringTableCell<AlbumTrack,String>());
         albumArtistColumn.setOnEditCommit(
                 (EventHandler<TableColumn.CellEditEvent<AlbumTrack, String>>) cellEditEvent -> cellEditEvent.getTableView().getItems().get(
                         cellEditEvent.getTablePosition().getRow()).setAlbumArtist(cellEditEvent.getNewValue()));
         // Composer column
-        TableColumn composerColumn = new TableColumn("Composer");
+        TableColumn<AlbumTrack, String> composerColumn = new TableColumn<AlbumTrack, String>("Composer");
         composerColumn.setCellValueFactory(new PropertyValueFactory<>("composer"));
-        composerColumn.setCellFactory(cellDataFeatures -> new StringTableCell());
+        composerColumn.setCellFactory(cellDataFeatures -> new StringTableCell<AlbumTrack,String>());
         composerColumn.setOnEditCommit(
                 (EventHandler<TableColumn.CellEditEvent<AlbumTrack, String>>) cellEditEvent -> cellEditEvent.getTableView().getItems().get(
                         cellEditEvent.getTablePosition().getRow()).setComposer(cellEditEvent.getNewValue()));
         // Genre column
-        TableColumn genreColumn = new TableColumn("Genre");
+        TableColumn<AlbumTrack, String> genreColumn = new TableColumn<AlbumTrack, String>("Genre");
         genreColumn.setCellValueFactory(new PropertyValueFactory<>("genre"));
-        genreColumn.setCellFactory(cellDataFeatures -> new StringTableCell());
+        genreColumn.setCellFactory(cellDataFeatures -> new StringTableCell<AlbumTrack,String>());
         //genreColumn.setOnEditCancel(t -> toggleButtonStatus(false));
         genreColumn.setOnEditCommit(
                 (EventHandler<TableColumn.CellEditEvent<AlbumTrack, String>>) cellEditEvent -> cellEditEvent.getTableView().getItems().get(
                         cellEditEvent.getTablePosition().getRow()).setGenre(cellEditEvent.getNewValue()));
         // Year column
-        TableColumn yearColumn = new TableColumn<>("Year");
+        TableColumn<AlbumTrack, String> yearColumn = new TableColumn<AlbumTrack, String>("Year");
         yearColumn.setCellValueFactory(new PropertyValueFactory<>("year"));
-        yearColumn.setCellFactory(cellDataFeatures -> new StringTableCell());
+        yearColumn.setCellFactory(cellDataFeatures -> new StringTableCell<AlbumTrack,String>());
         //yearColumn.setOnEditCancel(t -> toggleButtonStatus(false));
         yearColumn.setOnEditCommit(
                 (EventHandler<TableColumn.CellEditEvent<AlbumTrack, String>>) cellEditEvent -> cellEditEvent.getTableView().getItems().get(
                         cellEditEvent.getTablePosition().getRow()).setYear(cellEditEvent.getNewValue()));
         // Updated column
-        TableColumn unsavedColumn = new TableColumn<>("Unsaved");
+        TableColumn<AlbumTrack, Boolean> unsavedColumn = new TableColumn<AlbumTrack, Boolean>("Unsaved");
         unsavedColumn.setCellValueFactory(new PropertyValueFactory<>("unsaved"));
-        TableColumn viewAllColumn = new TableColumn("View all tags");
+        TableColumn<AlbumTrack, Boolean> viewAllColumn = new TableColumn<AlbumTrack, Boolean>("View all tags");
         viewAllColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<AlbumTrack, Boolean>, ObservableValue<Boolean>>(){
             @Override
             public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<AlbumTrack, Boolean> p){

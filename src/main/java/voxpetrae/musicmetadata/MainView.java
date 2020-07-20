@@ -14,7 +14,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.jaudiotagger.audio.exceptions.*;
 import voxpetrae.musicmetadata.views.interfaces.AlbumView;
 import voxpetrae.musicmetadata.guice.MusicMetadataModule;
 

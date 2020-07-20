@@ -8,7 +8,6 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
@@ -23,7 +22,6 @@ import javafx.scene.text.Font;
 import javafx.scene.control.Alert; 
 import javafx.scene.control.Alert.AlertType; 
 import javax.inject.Inject;
-import org.jaudiotagger.audio.exceptions.*;
 import voxpetrae.musicmetadata.models.AlbumTrack;
 import voxpetrae.musicmetadata.views.interfaces.AlbumView;
 import voxpetrae.musicmetadata.views.interfaces.TableBuilder;
@@ -32,10 +30,10 @@ import voxpetrae.musicmetadata.common.interfaces.IOHelper;
 import voxpetrae.musicmetadata.common.Props;
 import voxpetrae.musicmetadata.services.interfaces.AlbumService;
 
-@SuppressWarnings("unchecked")
+//@SuppressWarnings("unchecked")
 public class AlbumTableView extends Stage implements AlbumView {
     private ObservableList<AlbumTrack> tracks;
-    private Button quitButton;
+    //private Button quitButton;
     private Button saveNameOrderChangesButton;
     private Alert alert;
     private String folderPath;
@@ -64,9 +62,9 @@ public class AlbumTableView extends Stage implements AlbumView {
         MenuBar menuBar = buildMenu();
         Label imageLabel = buildImageLabel();
         Label messageLabel = buildMessageTable();
-        TableView table = _tableBuilder.buildTable(tracks);
+        var table = _tableBuilder.buildTable(tracks);
         saveNameOrderChangesButton = buildSaveButton();
-        quitButton = buildQuitButton();
+        //quitButton = buildQuitButton();
         alert = new Alert(AlertType.NONE); 
         // vBox.setSpacing(15);
         // vBox.setPadding(new Insets(0, 10, 10, 0));
@@ -123,13 +121,13 @@ public class AlbumTableView extends Stage implements AlbumView {
         return button;
     }
 
-    private Button buildQuitButton(){
-        Button button = new Button("Quit" + _ioHelper.getFolderPath());
-        //button.getStyleClass().add("marginalized-button");
-        button.setOnAction(exitHandler);
-        //button.setDisable(true);
-        return button;
-    }
+    // private Button buildQuitButton(){
+    //     Button button = new Button("Quit" + _ioHelper.getFolderPath());
+    //     //button.getStyleClass().add("marginalized-button");
+    //     button.setOnAction(exitHandler);
+    //     //button.setDisable(true);
+    //     return button;
+    // }
    
     EventHandler<ActionEvent> saveChangesHandler = new EventHandler<ActionEvent>(){
         @Override
@@ -169,6 +167,7 @@ public class AlbumTableView extends Stage implements AlbumView {
         @Override
         public void handle(ActionEvent event) {
             _nameOrderView.selectNameOrder(tracks);
+            // Todo: To check only the first track is insufficient, change to loop.
             if (tracks.get(0).isUnsaved()){
                 toggleButtonStatus(true);
                 alert = new Alert(AlertType.NONE); 

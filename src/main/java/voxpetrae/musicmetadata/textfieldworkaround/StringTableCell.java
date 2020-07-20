@@ -3,7 +3,7 @@ package voxpetrae.musicmetadata.textfieldworkaround;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
-public class StringTableCell extends AutoCommitTableCell<Object,String> {
+public class StringTableCell<S,T> extends AutoCommitTableCell<S,String> {
 
     @Override
     protected String getInputValue() {

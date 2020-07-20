@@ -1,6 +1,8 @@
 package voxpetrae.musicmetadata.models;
 
 import javafx.beans.property.*;
+// import javafx.beans.Observable;
+// import javafx.util.Callback;
 /**
  * A generic model for listings and overviews.
  */
@@ -131,4 +133,8 @@ public class AlbumTrack {
     public void setUnsaved(boolean unsaved) {
         this.unsaved.set(unsaved);
     }
+    /* public static Callback<AlbumTrack, Observable[]> extractor() {
+        return (AlbumTrack a) -> new Observable[]{a.titleProperty(), a.artistProperty(), a.albumArtistProperty(),
+            a.composerProperty(), a.genreProperty(), a.yearProperty(), a.filePathProperty(), a.unsavedProperty()};
+     } */
 }

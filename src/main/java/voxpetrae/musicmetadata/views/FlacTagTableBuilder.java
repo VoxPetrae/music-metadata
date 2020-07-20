@@ -11,19 +11,19 @@ import voxpetrae.musicmetadata.textfieldworkaround.StringTableCell;
 
 @SuppressWarnings("unchecked")
 public class FlacTagTableBuilder<T> implements TableBuilder<VorbisCommentTagField> {
-    public TableView buildTable(ObservableList<VorbisCommentTagField> fields){
-        TableView table = new TableView();
+    public TableView<VorbisCommentTagField> buildTable(ObservableList<VorbisCommentTagField> fields){
+        TableView<VorbisCommentTagField> table = new TableView<VorbisCommentTagField>();
         table.getStyleClass().add("tableStyle");
         table.setEditable(true);
-        TableColumn idColumn = new TableColumn("Tag ID");
-        TableColumn contentColumn = new TableColumn("Content");
+        TableColumn<VorbisCommentTagField, String> idColumn = new TableColumn<VorbisCommentTagField, String>("Tag ID");
+        TableColumn<VorbisCommentTagField, String> contentColumn = new TableColumn<VorbisCommentTagField, String>("Content");
         idColumn.setMinWidth(100);
         // The column's cell value factory is used to populate the column cells
         idColumn.setCellValueFactory(new PropertyValueFactory<VorbisCommentTagField, String>("id"));
         idColumn.prefWidthProperty().bind(table.widthProperty().divide(2));
         contentColumn.prefWidthProperty().bind(table.widthProperty().divide(2));
         contentColumn.setCellValueFactory(new PropertyValueFactory<VorbisCommentTagField, String>("content"));
-        contentColumn.setCellFactory(cellDataFeatures -> new StringTableCell());
+        contentColumn.setCellFactory(cellDataFeatures -> new StringTableCell<VorbisCommentTagField, String>());
         contentColumn.setOnEditCommit(
                 (EventHandler<TableColumn.CellEditEvent<VorbisCommentTagField, String>>) cellEditEvent -> cellEditEvent.getTableView().getItems().get(
                         cellEditEvent.getTablePosition().getRow()).setContent(cellEditEvent.getNewValue()));

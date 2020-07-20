@@ -3,7 +3,6 @@ package voxpetrae.musicmetadata.services.nameorder;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import voxpetrae.musicmetadata.services.nameorder.NameOrder;
 import voxpetrae.musicmetadata.services.interfaces.NameOrderOperations;
 
 public class NameOrderModifier implements voxpetrae.musicmetadata.services.interfaces.NameOrderModifier {

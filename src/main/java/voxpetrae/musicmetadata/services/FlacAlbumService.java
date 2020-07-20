@@ -1,21 +1,15 @@
 package voxpetrae.musicmetadata.services;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 import java.io.IOException;
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 import javax.inject.Inject;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.audio.exceptions.*;
-import org.jaudiotagger.tag.*;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.TagField;
 import org.jaudiotagger.tag.flac.FlacTag;
@@ -25,7 +19,7 @@ import voxpetrae.musicmetadata.models.AlbumTrack;
 import voxpetrae.musicmetadata.services.interfaces.TagService;
 import voxpetrae.musicmetadata.common.interfaces.IOHelper;
 
-@SuppressWarnings("unchecked")
+//@SuppressWarnings("unchecked")
 public class FlacAlbumService implements AlbumService {
     @Inject private IOHelper _ioHelper;
     @Inject private TagService _flacTagService;
@@ -36,21 +30,20 @@ public class FlacAlbumService implements AlbumService {
      * {@inheritDoc}
      */
     public ObservableList<AlbumTrack> getAlbumTracks(String folderPath) {
+        
         List<AlbumTrack> aTracks = new ArrayList<AlbumTrack>();
         //System.out.println("Trying folder " + folderPath + "...");
-        var tkon = Paths.get(folderPath).toAbsolutePath();
         try (Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
             paths.forEach((Path filePath) -> {
                 if (_ioHelper.isAudioFile(filePath, "flac")) {
                     try {
                         var flacTag = (FlacTag) _flacTagService.getTag(_ioHelper.getFileFromFilePath(filePath));
-                        AudioFile audioFile = null;
+                        // AudioFile audioFile = null;
 
-                        audioFile = AudioFileIO.read(new File(filePath.toString()));
-                        var generalTag = audioFile.getTag();
-                        Iterator tagFields = generalTag.getFields();
-                        List<TagField> ftmp2 = copyIterator(tagFields);
-
+                        // audioFile = AudioFileIO.read(new File(filePath.toString()));
+                        // var generalTag = audioFile.getTag();
+                        // var tagFields = generalTag.getFields();
+                        
                         /* for (TagField field : ftmp2) {
                             System.out.println("field: " + field.toString());
                         } */
@@ -76,16 +69,18 @@ public class FlacAlbumService implements AlbumService {
                         } else {
                             System.out.println("Not a real ID tag: " + flacTag.toString());
                         }
-                    } catch (CannotReadException cre) {
-                        System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + cre);
-                    } catch (IOException ex) {
-                        System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + ex);
-                    } catch (TagException tex) {
-                        System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + tex);
-                    } catch (ReadOnlyFileException rex) {
-                        System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + rex);
-                    } catch (InvalidAudioFrameException iex) {
-                        System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + iex);
+                    } catch (Exception eee) {
+                        System.out.println("Exception in FlacAlbumService: " + eee.toString());
+                    // } catch (CannotReadException cre) {
+                    //     System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + cre);
+                    // } catch (IOException ex) {
+                    //     System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + ex);
+                    // } catch (TagException tex) {
+                    //     System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + tex);
+                    // } catch (ReadOnlyFileException rex) {
+                    //     System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + rex);
+                    // } catch (InvalidAudioFrameException iex) {
+                    //     System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + iex);
                     }
                 } else {
                     //System.out.println(filePath + " is not a flac file!");
@@ -95,6 +90,8 @@ public class FlacAlbumService implements AlbumService {
             System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + ex);
         }
         ObservableList<AlbumTrack> albumTracks = FXCollections.observableArrayList(aTracks);
+        //ObservableList<AlbumTrack> albumTracks = FXCollections.observableArrayList(AlbumTrack.extractor());
+        //albumTracks.addAll(aTracks);
         return albumTracks;
     }
 
@@ -107,7 +104,6 @@ public class FlacAlbumService implements AlbumService {
                     if (tag != null && !tag.isEmpty()){
                         int trackNumber = Integer.parseInt(tag.getFirst(FieldKey.TRACK));
                         AlbumTrack track = getAlbumTrack(albumTracks, trackNumber);
-                        var title = tag.getFirst(FieldKey.TITLE);
                         var artists = convertTagListToSemicolonSeparatedString(tag, FieldKey.ARTIST);
                         var albumArtists = convertTagListToSemicolonSeparatedString(tag, FieldKey.ALBUM_ARTIST);
                         var composers = convertTagListToSemicolonSeparatedString(tag, FieldKey.COMPOSER);
@@ -176,11 +172,11 @@ public class FlacAlbumService implements AlbumService {
      * @param iter The Iterator to convert
      * @param <T>  The type
      * @return A List with the elements from the Iterator
-     */
+     
     private static <T> List<T> copyIterator(Iterator<T> iter) {
         List<T> copy = new ArrayList<T>();
         while (iter.hasNext())
             copy.add(iter.next());
         return copy;
-    }
+    }*/
 }

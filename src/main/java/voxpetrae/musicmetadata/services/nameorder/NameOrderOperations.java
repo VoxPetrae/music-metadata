@@ -1,7 +1,6 @@
 package voxpetrae.musicmetadata.services.nameorder;
 
 import java.util.List;
-import voxpetrae.musicmetadata.services.nameorder.NameOrder;
 
 public class NameOrderOperations implements voxpetrae.musicmetadata.services.interfaces.NameOrderOperations {
     public NameOrder detectNameOrder(String name) {
