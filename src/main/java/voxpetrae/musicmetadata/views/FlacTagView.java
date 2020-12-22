@@ -27,20 +27,22 @@ import javax.inject.Inject;
 @SuppressWarnings("unchecked")
 public class FlacTagView extends Stage implements TagView{
     @Inject private IOHelper _ioHelper;
-    @Inject private TagService _tagService;
+    @Inject private TagService<FlacTag> _flacTagService;
     @Inject private TableBuilder<VorbisCommentTagField> _tableBuilder;
     
     public void initiate(Path filePath){
         if (_ioHelper.isAudioFile(filePath, "flac")){
             File file = filePath.toFile();
-            FlacTag tag = (FlacTag) _tagService.getTag(file);
+            FlacTag tag = (FlacTag) _flacTagService.getTag(file);
             if (tag == null){
                 System.out.println("No tag for file!");
             }
             else{
-                Iterator ftmp1 = tag.getFields();
                 // Vorbis comment is the tag format used with Flac
-                List<VorbisCommentTagField> ftmp2 = copyIterator(ftmp1);
+                List<VorbisCommentTagField> ftmp2 = copyIterator(tag.getFields());
+                for (VorbisCommentTagField vorbisCommentTagField : ftmp2) {
+                    System.out.println("ogg vorbis field: " + vorbisCommentTagField.getId() + " = " + vorbisCommentTagField.toString());
+                }
                 // ObservableList is an array list that allows a listener to track changes
                 // The methods of FXCollections mirrors java.util.Collection methods
                 ObservableList<VorbisCommentTagField> fields = FXCollections.observableArrayList(ftmp2);
@@ -115,10 +117,10 @@ public class FlacTagView extends Stage implements TagView{
      * @param <T> The type
      * @return A List with the elements from the Iterator
      */
-    private static <T> List<T> copyIterator(Iterator<T> iter) {
-        List<T> copy = new ArrayList<T>();
+    private static <T> List<VorbisCommentTagField> copyIterator(Iterator<T> iter) {
+        List<VorbisCommentTagField> copy = (List<VorbisCommentTagField>) new ArrayList<T>();
         while (iter.hasNext())
-            copy.add(iter.next());
+            copy.add((VorbisCommentTagField) iter.next());
         return copy;
     }
 }

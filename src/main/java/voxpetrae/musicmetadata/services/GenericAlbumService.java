@@ -14,64 +14,57 @@ import javafx.collections.ObservableList;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.TagField;
 import org.jaudiotagger.tag.flac.FlacTag;
+import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.vorbiscomment.VorbisCommentTagField;
 import voxpetrae.musicmetadata.services.interfaces.AlbumService;
 import voxpetrae.musicmetadata.models.AlbumTrack;
 import voxpetrae.musicmetadata.services.interfaces.TagService;
 import voxpetrae.musicmetadata.common.interfaces.IOHelper;
 
-//@SuppressWarnings("unchecked")
-public class FlacAlbumService implements AlbumService {
+public class GenericAlbumService implements AlbumService {
     @Inject private IOHelper _ioHelper;
-    @Inject private TagService<FlacTag> _flacTagService;
+    @Inject private TagService<Tag> _genericTagService;
     private String albumName;
     private String albumArtist;
-
-    /**
-     * {@inheritDoc}
-     */
     public ObservableList<AlbumTrack> getAlbumTracks(String folderPath) {
         
         List<AlbumTrack> aTracks = new ArrayList<AlbumTrack>();
         //System.out.println("Trying folder " + folderPath + "...");
         try (Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
             paths.forEach((Path filePath) -> {
-                if (_ioHelper.isAudioFile(filePath, "flac")) {
+                var isAudioFile = _ioHelper.isAudioFile(filePath, "flac");
+                if (Boolean.TRUE.equals(isAudioFile)) {
                     try {
-                        var flacTag = (FlacTag) _flacTagService.getTag(_ioHelper.getFileFromFilePath(filePath));
-                        // AudioFile audioFile = null;
-
-                        // audioFile = AudioFileIO.read(new File(filePath.toString()));
-                        // var generalTag = audioFile.getTag();
-                        List<TagField> flacTagFields = copyIterator(flacTag.getFields());
-                                
-                        for (TagField flacField : flacTagFields) {
-                            System.out.println("flac field: " + flacField.getId() + " = " + flacField.toString());
+                        var tag = _genericTagService.getTag(_ioHelper.getFileFromFilePath(filePath));
+                        List<TagField> genTagFields = copyIterator(tag.getFields());
+                        
+                        for (TagField genField : genTagFields) {
+                            System.out.println("generic field: " + genField.getId() + " = " + genField.toString());
                         }
-        
-                        if (flacTag != null && !flacTag.isEmpty()) {
-                            var track = Integer.parseInt(flacTag.getFirst(FieldKey.TRACK));
-                            var title = flacTag.getFirst(FieldKey.TITLE);
-                            var artists = convertTagListToSemicolonSeparatedString(flacTag, FieldKey.ARTIST);
-                            var albumArtists = convertTagListToSemicolonSeparatedString(flacTag, FieldKey.ALBUM_ARTIST);
-                            var composers = convertTagListToSemicolonSeparatedString(flacTag, FieldKey.COMPOSER);
-                            var genre = flacTag.getFirst(FieldKey.GENRE);
-                            var year = flacTag.getFirst(FieldKey.YEAR);
-                            /* System.out.println("Track no: " + track + ", title: " + title + ", artists: " + artists
+
+                        if (tag != null && !tag.isEmpty()) {
+                            var track = Integer.parseInt(tag.getFirst(FieldKey.TRACK));
+                            var title = tag.getFirst(FieldKey.TITLE);
+                            var artists = convertTagListToSemicolonSeparatedString(tag, FieldKey.ARTIST);
+                            var albumArtists = convertTagListToSemicolonSeparatedString(tag, FieldKey.ALBUM_ARTIST);
+                            var composers = convertTagListToSemicolonSeparatedString(tag, FieldKey.COMPOSER);
+                            var genre = tag.getFirst(FieldKey.GENRE);
+                            var year = tag.getFirst(FieldKey.YEAR);
+                            System.out.println("Track no: " + track + ", title: " + title + ", artists: " + artists
                                     + ", albumArtists: " + albumArtists + ", composers: " + composers + ", genre: "
                                     + genre + ", year: " + year + ", album name: " + albumName + ", album artist: "
-                                    + albumArtist); */
+                                    + albumArtist);
                             aTracks.add(new AlbumTrack(track, title, artists, albumArtists, composers, genre, year,
                                     filePath.toString(), false));
                             if (albumName == null)
-                                albumName = flacTag.getFirst(FieldKey.ALBUM);
+                                albumName = tag.getFirst(FieldKey.ALBUM);
                             if (albumArtist == null)
-                                albumArtist = flacTag.getFirst(FieldKey.ALBUM_ARTIST);
+                                albumArtist = tag.getFirst(FieldKey.ALBUM_ARTIST);
                         } else {
-                            System.out.println("Not a real ID tag: " + flacTag.toString());
+                            System.out.println("Not a real ID tag: " + tag.toString());
                         }
                     } catch (Exception eee) {
-                        System.out.println("Exception in FlacAlbumService: " + eee.toString());
+                        System.out.println("Exception in GenericAlbumService: " + eee.toString());
                     // } catch (CannotReadException cre) {
                     //     System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + cre);
                     // } catch (IOException ex) {
@@ -90,18 +83,16 @@ public class FlacAlbumService implements AlbumService {
         } catch (IOException ex) {
             System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + ex);
         }
-        ObservableList<AlbumTrack> albumTracks = FXCollections.observableArrayList(aTracks);
-        //ObservableList<AlbumTrack> albumTracks = FXCollections.observableArrayList(AlbumTrack.extractor());
-        //albumTracks.addAll(aTracks);
-        return albumTracks;
+        return FXCollections.observableArrayList(aTracks);
     }
 
     public boolean saveAlbumTracksToFile(ObservableList<AlbumTrack> albumTracks, String folderPath){
         try(Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
             paths.forEach((Path filePath) -> {
-                if (_ioHelper.isAudioFile(filePath, "flac")) {
+                var isAudioFile = _ioHelper.isAudioFile(filePath, "flac");
+                if (Boolean.TRUE.equals(isAudioFile)) {
                     var file = filePath.toFile();
-                    FlacTag tag = (FlacTag) _flacTagService.getTag(file);
+                    FlacTag tag = (FlacTag) _genericTagService.getTag(file);
                     if (tag != null && !tag.isEmpty()){
                         int trackNumber = Integer.parseInt(tag.getFirst(FieldKey.TRACK));
                         AlbumTrack track = getAlbumTrack(albumTracks, trackNumber);
@@ -114,7 +105,7 @@ public class FlacAlbumService implements AlbumService {
                         composers.equals(track.getComposer()) + "!");
                         // 1: Hur mappa alla värden i track mot taggarna i flactag?
                         // 2: Om man låter AlbumTrack ha dynamiska properties som får sina värden vid inläsning av flac-filen.
-                        _flacTagService.updateTag(tag, file);
+                        _genericTagService.updateTag(tag, file);
                         track.setUnsaved(false);
                         //albumTracks.add(new AlbumTrack(track, title, artists, albumArtists, composers, filePath.toString(), false));
                     }
@@ -144,8 +135,8 @@ public class FlacAlbumService implements AlbumService {
         return albumArtist;
     }
 
-    private String convertTagListToSemicolonSeparatedString(FlacTag flacTag, FieldKey fieldKey) {
-        List<TagField> tagFields = flacTag.getFields(fieldKey);
+    private String convertTagListToSemicolonSeparatedString(Tag tag, FieldKey fieldKey) {
+        List<TagField> tagFields = tag.getFields(fieldKey);
         StringBuilder sb = new StringBuilder();
         tagFields.forEach((TagField tagField) -> {
             VorbisCommentTagField tf = (VorbisCommentTagField) tagField;
@@ -180,4 +171,5 @@ public class FlacAlbumService implements AlbumService {
             copy.add(iter.next());
         return copy;
     }
+    
 }

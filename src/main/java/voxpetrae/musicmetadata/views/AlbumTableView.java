@@ -38,7 +38,7 @@ public class AlbumTableView extends Stage implements AlbumView {
     private Alert alert;
     private String folderPath;
     @Inject private IOHelper _ioHelper;
-    @Inject private AlbumService _flacAlbumService;
+    @Inject private AlbumService _genericAlbumService;
     @Inject private TableBuilder<AlbumTrack> _tableBuilder;
     @Inject private NameOrderView _nameOrderView;
 
@@ -46,32 +46,32 @@ public class AlbumTableView extends Stage implements AlbumView {
         _ioHelper.setFolderPath("Choose folder");
         folderPath = _ioHelper.getFolderPath();
         if (folderPath != null){
-            tracks = _flacAlbumService.getAlbumTracks(folderPath);    
+            tracks = _genericAlbumService.getAlbumTracks(folderPath);    
         }
         else{
             return;
         }
         drawGui(tracks);
     }
-    private void drawGui(ObservableList<AlbumTrack> tracks){
+    private void drawGui(final ObservableList<AlbumTrack> tracks) {
         final VBox vBox = new VBox();
         final HBox hBox = new HBox();
-        Scene scene = new Scene(vBox, 1000, 500);
-        var cssPath = getClass().getResource("../css/musicmetadata.css").toExternalForm();
+        final Scene scene = new Scene(vBox, 1000, 500);
+        final var cssPath = getClass().getResource("../css/musicmetadata.css").toExternalForm();
         scene.getStylesheets().add(cssPath);
-        MenuBar menuBar = buildMenu();
-        Label imageLabel = buildImageLabel();
-        Label messageLabel = buildMessageTable();
-        var table = _tableBuilder.buildTable(tracks);
+        final MenuBar menuBar = buildMenu();
+        final Label imageLabel = buildImageLabel();
+        final Label messageLabel = buildMessageTable();
+        final var table = _tableBuilder.buildTable(tracks);
         saveNameOrderChangesButton = buildSaveButton();
-        //quitButton = buildQuitButton();
-        alert = new Alert(AlertType.NONE); 
+        // quitButton = buildQuitButton();
+        alert = new Alert(AlertType.NONE);
         // vBox.setSpacing(15);
         // vBox.setPadding(new Insets(0, 10, 10, 0));
         hBox.getChildren().addAll(saveNameOrderChangesButton, messageLabel);
         hBox.setAlignment(Pos.BOTTOM_CENTER);
         vBox.getChildren().addAll(menuBar, imageLabel, table, hBox);
-        
+
         this.setTitle("Music Album");
         this.setScene(scene);
         this.show();
@@ -79,128 +79,115 @@ public class AlbumTableView extends Stage implements AlbumView {
             this.close();
         });
     }
-    private MenuBar buildMenu(){
-        MenuBar menuBar = new MenuBar();
-        Menu fileMenu = new Menu("File");
-        Menu toolsMenu = new Menu("Tools");
+
+    private MenuBar buildMenu() {
+        final MenuBar menuBar = new MenuBar();
+        final Menu fileMenu = new Menu("File");
+        final Menu toolsMenu = new Menu("Tools");
         menuBar.getMenus().addAll(fileMenu, toolsMenu);
-        MenuItem quit = new MenuItem("Close album view");
-        MenuItem changeNameOrder = new MenuItem("Change name order");
+        final MenuItem quit = new MenuItem("Close album view");
+        final MenuItem changeNameOrder = new MenuItem("Change name order");
         quit.setOnAction(exitHandler);
         changeNameOrder.setOnAction(changeNameOrderHandler);
         fileMenu.getItems().add(quit);
         toolsMenu.getItems().add(changeNameOrder);
-        fileMenu.getProperties().put(MenuBar.class.getCanonicalName(), menuBar); // Hack to access Node from EventHandler
+        fileMenu.getProperties().put(MenuBar.class.getCanonicalName(), menuBar); // Hack to access Node from
+                                                                                 // EventHandler
         return menuBar;
     }
-    private Label buildImageLabel(){
-        Label label = new Label(_flacAlbumService.getAlbumArtist() + ": " + _flacAlbumService.getAlbumName());
+
+    private Label buildImageLabel() {
+        final Label label = new Label(_genericAlbumService.getAlbumArtist() + ": " + _genericAlbumService.getAlbumName());
         label.setFont(new Font("Arial", 20));
         label.setPadding(new Insets(10));
         label.getStyleClass().add("tableLable");
-        String folderPath = _ioHelper.getFolderPath();
-        String imagePath = folderPath + (String) Props.prop("albumcoverfilename");//"\\Folder.jpg"
-        Image image = new Image(new File(imagePath).toURI().toString());
-        ImageView imageView = new ImageView(image);
+        
+        final String imagePath = folderPath + File.separator + Props.prop("albumcoverfilename");// "\\Folder.jpg"
+        final Image image = new Image(new File(imagePath).toURI().toString());
+        final ImageView imageView = new ImageView(image);
         imageView.setFitHeight(80);
         imageView.setFitWidth(80);
         label.setGraphic(imageView);
         return label;
     }
 
-    private Label buildMessageTable(){
-        Label label = new Label("Do stuff!");
-        return label;
+    private Label buildMessageTable() {
+        return new Label("Do stuff!");
     }
-    private Button buildSaveButton(){
-        Button button = new Button("Save changes");
-        //button.getStyleClass().add("marginalized-button");
+
+    private Button buildSaveButton() {
+        final Button button = new Button("Save changes");
+        // button.getStyleClass().add("marginalized-button");
         button.setOnAction(saveChangesHandler);
-        //button.setDisable(true);
+        // button.setDisable(true);
         button.setVisible(false);
         return button;
     }
 
     // private Button buildQuitButton(){
-    //     Button button = new Button("Quit" + _ioHelper.getFolderPath());
-    //     //button.getStyleClass().add("marginalized-button");
-    //     button.setOnAction(exitHandler);
-    //     //button.setDisable(true);
-    //     return button;
+    // Button button = new Button("Quit" + _ioHelper.getFolderPath());
+    // //button.getStyleClass().add("marginalized-button");
+    // button.setOnAction(exitHandler);
+    // //button.setDisable(true);
+    // return button;
     // }
-   
-    EventHandler<ActionEvent> saveChangesHandler = new EventHandler<ActionEvent>(){
-        @Override
-        public void handle(ActionEvent event) {
-            System.out.println("Saving changes...");
-            folderPath = _ioHelper.getFolderPath();
-            _flacAlbumService.saveAlbumTracksToFile(tracks, folderPath);
-            toggleButtonStatus(true);
-        }
+
+    EventHandler<ActionEvent> saveChangesHandler = event -> {
+        System.out.println("Saving changes...");
+        folderPath = _ioHelper.getFolderPath();
+        _genericAlbumService.saveAlbumTracksToFile(tracks, folderPath);
+        toggleButtonStatus(true);
     };
 
-    private void toggleButtonStatus(boolean disabled){
+    private void toggleButtonStatus(final boolean disabled) {
         System.out.println("Toggling...");
         saveNameOrderChangesButton.setVisible(disabled);
     }
 
-    EventHandler<ActionEvent> exitHandler = new EventHandler<ActionEvent>(){
-        @Override
-        public void handle(ActionEvent event) {
-            System.out.println("Closing Album View...");
-            Stage stage = getStageFromEvent(event);
-            try{
-                stage.close();
-            }
-            catch(Exception e){
-                System.out.println("Oops! Closing Album View failed because of " + e);
-            }
-        }
-    };
-    
-    EventHandler<ActionEvent> changeNameOrderHandler = new EventHandler<ActionEvent>() {
-        /**
-         * Opens the view for name order change (e.g., from "Lennon, John" to "John Lennon" and v.v.)
-         *
-         * @param event - the click on the menu item
-         */
-        @Override
-        public void handle(ActionEvent event) {
-            _nameOrderView.selectNameOrder(tracks);
-            // Todo: To check only the first track is insufficient, change to loop.
-            if (tracks.get(0).isUnsaved()){
-                toggleButtonStatus(true);
-                alert = new Alert(AlertType.NONE); 
-                alert.setAlertType(AlertType.INFORMATION); 
-                alert.setHeaderText(null);
-                alert.setTitle(null);
-                alert.setContentText("View your changes before saving.");
-                alert.show();
-            }
-            
+    EventHandler<ActionEvent> exitHandler = event -> {
+        System.out.println("Closing Album View...");
+        final Stage stage = getStageFromEvent(event);
+        try {
+            stage.close();
+        } catch (final Exception e) {
+            System.out.println("Oops! Closing Album View failed because of " + e);
         }
     };
 
+    EventHandler<ActionEvent> changeNameOrderHandler = event -> {
+        _nameOrderView.selectNameOrder(tracks);
+        // Todo: To check only the first track is insufficient, change to loop.
+        if (tracks.get(0).isUnsaved()) {
+            toggleButtonStatus(true);
+            alert = new Alert(AlertType.NONE);
+            alert.setAlertType(AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            alert.setTitle(null);
+            alert.setContentText("View your changes before saving.");
+            alert.show();
+        }
+
+    };
+
     /*
-    Helper to access Stage from ActionEvent.
-    The thing is that MenuItem isn't a Node, but MenuBar is, and Button is.
-    So you have to check if the event target is a MenuItem before you get the window to close.
-    Alternatively, you could use different event handlers for exit actions on Button and MenuItem.
-    */
-    private Stage getStageFromEvent(ActionEvent event){
+     * Helper to access Stage from ActionEvent. The thing is that MenuItem isn't a
+     * Node, but MenuBar is, and Button is. So you have to check if the event target
+     * is a MenuItem before you get the window to close. Alternatively, you could
+     * use different event handlers for exit actions on Button and MenuItem.
+     */
+    private Stage getStageFromEvent(final ActionEvent event) {
         Node node;
-        var target = event.getTarget();
-        if (target instanceof MenuItem){
+        final var target = event.getTarget();
+        if (target instanceof MenuItem) {
             System.out.println("Target is Menu");
-            MenuItem item = (MenuItem) target;
-            Menu menu = item.getParentMenu();
-            MenuBar bar = (MenuBar) menu.getProperties().get(MenuBar.class.getCanonicalName());
+            final MenuItem item = (MenuItem) target;
+            final Menu menu = item.getParentMenu();
+            final MenuBar bar = (MenuBar) menu.getProperties().get(MenuBar.class.getCanonicalName());
             node = (Node) bar;
+        } else {
+            node = (Node) event.getSource();
         }
-        else{
-            node = (Node) event.getSource(); 
-        }
-        Stage stage = (Stage) node.getScene().getWindow();
+        final Stage stage = (Stage) node.getScene().getWindow();
         return stage;
     }
 }

@@ -12,11 +12,12 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 
-public class FlacTagService implements TagService {
+public class FlacTagService<T> implements TagService<FlacTag> {
     public Tag getTag(File file){
         try {
             FlacTagReader reader = new FlacTagReader();
             FlacTag tag = reader.read(new RandomAccessFile(file, "rw"));
+            System.out.println("FIELD COUNT: " + tag.getFieldCount());
             return tag;
         } catch (CannotReadException ex) {
             System.out.println("CannotReadException in FlacTagService.getTag: " + ex);
