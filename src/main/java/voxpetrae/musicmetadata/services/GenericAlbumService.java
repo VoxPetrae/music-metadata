@@ -32,7 +32,7 @@ public class GenericAlbumService implements AlbumService {
         //System.out.println("Trying folder " + folderPath + "...");
         try (Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
             paths.forEach((Path filePath) -> {
-                var isAudioFile = _ioHelper.isAudioFile(filePath, "flac");
+                var isAudioFile = _ioHelper.isAudioFile(filePath, "flac"); // Todo: Check for different image formats
                 if (Boolean.TRUE.equals(isAudioFile)) {
                     try {
                         var tag = _genericTagService.getTag(_ioHelper.getFileFromFilePath(filePath));

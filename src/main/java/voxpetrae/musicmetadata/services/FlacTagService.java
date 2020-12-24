@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 
+/**
+ * Embryonic Flac implementation. This should be completed with embedded image handling.
+ */
 public class FlacTagService<T> implements TagService<FlacTag> {
     public Tag getTag(File file){
         try {
