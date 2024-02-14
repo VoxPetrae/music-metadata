@@ -13,7 +13,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import com.google.inject.Guice;
-import com.google.inject.Injector;
+//import com.google.inject.Injector;
 import voxpetrae.musicmetadata.views.interfaces.AlbumView;
 import voxpetrae.musicmetadata.guice.MusicMetadataModule;
 
@@ -26,7 +26,7 @@ public class MainView extends Application {
         //Application.setUserAgentStylesheet(STYLESHEET_CASPIAN);
         //Application.setUserAgentStylesheet(STYLESHEET_MODENA);
         MusicMetadataModule module = new MusicMetadataModule();
-        Injector injector = Guice.createInjector(module);
+        var injector = Guice.createInjector(module);
         this._albumView = injector.getInstance(AlbumView.class);
         
         final String MENU_BAR_ID = "#menuBar";
@@ -72,12 +72,10 @@ public class MainView extends Application {
     /**
      * Sets exit action
      */
-    EventHandler<ActionEvent> exitHandler = new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-            System.out.println("Closing Music Metadata...");
-            System.exit(0);
-        }
+    EventHandler<ActionEvent> exitHandler = event -> {
+        System.out.println(System.getProperty("java.version"));
+        System.out.println("Closing Music Metadata...");
+        System.exit(0);
     };
     /**
      * Initiates the album listing GUI

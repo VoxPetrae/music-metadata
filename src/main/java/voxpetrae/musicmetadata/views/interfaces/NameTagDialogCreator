@@ -1,0 +1,9 @@
+package voxpetrae.musicmetadata.views.interfaces;
+
+import java.util.function.Consumer;
+import javafx.scene.control.Dialog;
+
+public interface NameTagDialogCreator {
+    Dialog<String> createNameTagChooser(Consumer<Boolean> artistsAction, Consumer<Boolean> albumArtistsAction,
+            Consumer<Boolean> composersAction, Consumer<Boolean> straightNameOrderAction);
+}

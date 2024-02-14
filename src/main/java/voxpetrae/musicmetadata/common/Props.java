@@ -8,6 +8,9 @@ public class Props {
     static String propertyValue;
     static String separator = System.getProperty( "file.separator" );
     static String fileName = "musicmetadata.properties";
+    private Props(){
+        throw new IllegalStateException("Utility class");
+    }
     public static String prop(String key){
         Properties properties = new Properties();
         //System.out.println("PROPPATH " + Props.class.getResource(fileName).toExternalForm());
@@ -18,7 +21,7 @@ public class Props {
                 return propertyValue.trim();
             }
             else{
-                logger.error("Exception in " + Props.class.getName() + ": " + fileName);
+                logger.error("Exception in %s: %s", Props.class.getName(), fileName);
                 throw new NullPointerException("Input stream for file " + fileName + " was null.");
             }
         }

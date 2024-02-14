@@ -30,10 +30,10 @@ public class NameOrderView implements voxpetrae.musicmetadata.views.interfaces.N
                         HashMap<String, Boolean> prefs = new HashMap<>();
             // Open dialog window with name alternatives
             Dialog dialog = createNameTagChooser(
-                    param -> prefs.put("ARTIST", param ? true : false),
-                    param -> prefs.put("ALBUMARTIST", param  ? true : false),
-                    param -> prefs.put("COMPOSER", param  ? true : false),
-                    param -> prefs.put("STRAIGHT_NAMEORDER", param  ? true : false));
+                    param -> prefs.put("ARTIST", param),
+                    param -> prefs.put("ALBUMARTIST", param),
+                    param -> prefs.put("COMPOSER", param),
+                    param -> prefs.put("STRAIGHT_NAMEORDER", param));
             // Get response
             //Optional<ButtonType> result = (Optional<ButtonType>) dialog.showAndWait();
             dialog.showAndWait().ifPresent(response -> {
@@ -61,7 +61,7 @@ public class NameOrderView implements voxpetrae.musicmetadata.views.interfaces.N
                     }
                     System.out.println("Artists: " + prefs.get("ARTIST") + ", albumArtists: " + prefs.get("ALBUMARTIST") +
                             ", composers: " + prefs.get("COMPOSER") + ", chosen name order: " + nameOrder);
-                    if (nameFieldsToChange.size() > 0){
+                    if (!nameFieldsToChange.isEmpty()){
                         _nameOrderService.changeNameOrder(tracks, nameFieldsToChange, nameOrder);
                         // if (tracks.get(0).isUnsaved()){
                         //     toggleButtonStatus(true);
