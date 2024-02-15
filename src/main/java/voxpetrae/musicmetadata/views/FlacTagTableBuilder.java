@@ -8,21 +8,24 @@ import javafx.event.EventHandler;
 import org.jaudiotagger.tag.vorbiscomment.VorbisCommentTagField;
 import voxpetrae.musicmetadata.views.interfaces.TableBuilder;
 import voxpetrae.musicmetadata.textfieldworkaround.StringTableCell;
+import org.apache.logging.log4j.Logger;
 
 @SuppressWarnings("unchecked")
 public class FlacTagTableBuilder<T> implements TableBuilder<VorbisCommentTagField> {
+    private static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(FlacTagTableBuilder.class);
     public TableView<VorbisCommentTagField> buildTable(ObservableList<VorbisCommentTagField> fields){
-        TableView<VorbisCommentTagField> table = new TableView<VorbisCommentTagField>();
+        logger.info("Building table for flac tracks...");
+        TableView<VorbisCommentTagField> table = new TableView<>();
         table.getStyleClass().add("tableStyle");
         table.setEditable(true);
-        TableColumn<VorbisCommentTagField, String> idColumn = new TableColumn<VorbisCommentTagField, String>("Tag ID");
-        TableColumn<VorbisCommentTagField, String> contentColumn = new TableColumn<VorbisCommentTagField, String>("Content");
+        TableColumn<VorbisCommentTagField, String> idColumn = new TableColumn<>("Tag ID");
+        TableColumn<VorbisCommentTagField, String> contentColumn = new TableColumn<>("Content");
         idColumn.setMinWidth(100);
         // The column's cell value factory is used to populate the column cells
-        idColumn.setCellValueFactory(new PropertyValueFactory<VorbisCommentTagField, String>("id"));
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         idColumn.prefWidthProperty().bind(table.widthProperty().divide(2));
         contentColumn.prefWidthProperty().bind(table.widthProperty().divide(2));
-        contentColumn.setCellValueFactory(new PropertyValueFactory<VorbisCommentTagField, String>("content"));
+        contentColumn.setCellValueFactory(new PropertyValueFactory<>("content"));
         contentColumn.setCellFactory(cellDataFeatures -> new StringTableCell<VorbisCommentTagField, String>());
         contentColumn.setOnEditCommit(
                 (EventHandler<TableColumn.CellEditEvent<VorbisCommentTagField, String>>) cellEditEvent -> cellEditEvent.getTableView().getItems().get(

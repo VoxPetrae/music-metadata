@@ -16,9 +16,10 @@ import com.google.inject.Guice;
 //import com.google.inject.Injector;
 import voxpetrae.musicmetadata.views.interfaces.AlbumView;
 import voxpetrae.musicmetadata.guice.MusicMetadataModule;
+import org.apache.logging.log4j.Logger;
 
 public class MainView extends Application {
-    private static final org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(MainView.class);
+    private static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(MainView.class);
     private AlbumView _albumView;
 
     @Override

@@ -29,6 +29,7 @@ import voxpetrae.musicmetadata.views.interfaces.NameOrderView;
 import voxpetrae.musicmetadata.common.interfaces.IOHelper;
 import voxpetrae.musicmetadata.common.Props;
 import voxpetrae.musicmetadata.services.interfaces.AlbumService;
+import voxpetrae.musicmetadata.services.interfaces.AlbumInfoService;
 
 //@SuppressWarnings("unchecked")
 public class AlbumTableView extends Stage implements AlbumView {
@@ -37,16 +38,27 @@ public class AlbumTableView extends Stage implements AlbumView {
     private Button saveNameOrderChangesButton;
     private Alert alert;
     private String folderPath;
-    @Inject private IOHelper _ioHelper;
-    @Inject private AlbumService _genericAlbumService;
-    @Inject private TableBuilder<AlbumTrack> _tableBuilder;
-    @Inject private NameOrderView _nameOrderView;
 
+    private IOHelper ioHelper;
+    private AlbumService genericAlbumService;
+    private TableBuilder<AlbumTrack> tableBuilder;
+    private NameOrderView nameOrderView;
+    private AlbumInfoService linkedAlbumInfoService;
+    @Inject
+    public AlbumTableView(IOHelper ioHelper, AlbumService albumService, TableBuilder<AlbumTrack> tableBuilder,
+        NameOrderView nameOrderView, AlbumInfoService linkedAlbumInfoService){
+        this.ioHelper = ioHelper;
+        this.genericAlbumService = albumService;
+        this.tableBuilder = tableBuilder;
+        this.nameOrderView = nameOrderView;
+        this.linkedAlbumInfoService = linkedAlbumInfoService;
+
+    }
     public void initiate() {
-        _ioHelper.setFolderPath("Choose folder");
-        folderPath = _ioHelper.getFolderPath();
-        if (folderPath != null){
-            tracks = _genericAlbumService.getAlbumTracks(folderPath);    
+        ioHelper.setFolderPath("Choose folder");
+        folderPath = ioHelper.getFolderPath();
+        if (this.folderPath != null){
+            tracks = genericAlbumService.getAlbumTracks(folderPath);    
         }
         else{
             return;
@@ -62,7 +74,7 @@ public class AlbumTableView extends Stage implements AlbumView {
         final MenuBar menuBar = buildMenu();
         final Label imageLabel = buildImageLabel();
         final Label messageLabel = buildMessageTable();
-        final var table = _tableBuilder.buildTable(tracks);
+        final var table = tableBuilder.buildTable(tracks);
         saveNameOrderChangesButton = buildSaveButton();
         // quitButton = buildQuitButton();
         alert = new Alert(AlertType.NONE);
@@ -87,17 +99,19 @@ public class AlbumTableView extends Stage implements AlbumView {
         menuBar.getMenus().addAll(fileMenu, toolsMenu);
         final MenuItem quit = new MenuItem("Close album view");
         final MenuItem changeNameOrder = new MenuItem("Change name order");
+        final MenuItem lookUpAlbum = new MenuItem("Look up album");
+        lookUpAlbum.setOnAction(lookUpAlbumHandler);
         quit.setOnAction(exitHandler);
         changeNameOrder.setOnAction(changeNameOrderHandler);
         fileMenu.getItems().add(quit);
-        toolsMenu.getItems().add(changeNameOrder);
+        toolsMenu.getItems().addAll(changeNameOrder, lookUpAlbum);
         fileMenu.getProperties().put(MenuBar.class.getCanonicalName(), menuBar); // Hack to access Node from
                                                                                  // EventHandler
         return menuBar;
     }
 
     private Label buildImageLabel() {
-        final Label label = new Label(_genericAlbumService.getAlbumArtist() + ": " + _genericAlbumService.getAlbumName());
+        final Label label = new Label(genericAlbumService.getAlbumArtist() + ": " + genericAlbumService.getAlbumName());
         label.setFont(new Font("Arial", 20));
         label.setPadding(new Insets(10));
         label.getStyleClass().add("tableLable");
@@ -125,7 +139,7 @@ public class AlbumTableView extends Stage implements AlbumView {
     }
 
     // private Button buildQuitButton(){
-    // Button button = new Button("Quit" + _ioHelper.getFolderPath());
+    // Button button = new Button("Quit" + ioHelper.getFolderPath());
     // //button.getStyleClass().add("marginalized-button");
     // button.setOnAction(exitHandler);
     // //button.setDisable(true);
@@ -134,8 +148,8 @@ public class AlbumTableView extends Stage implements AlbumView {
 
     EventHandler<ActionEvent> saveChangesHandler = event -> {
         System.out.println("Saving changes...");
-        folderPath = _ioHelper.getFolderPath();
-        _genericAlbumService.saveAlbumTracksToFile(tracks, folderPath);
+        folderPath = ioHelper.getFolderPath();
+        genericAlbumService.saveAlbumTracksToFile(tracks, folderPath);
         toggleButtonStatus(true);
     };
 
@@ -153,15 +167,22 @@ public class AlbumTableView extends Stage implements AlbumView {
             System.out.println("Oops! Closing Album View failed because of " + e);
         }
     };
+    EventHandler<ActionEvent> lookUpAlbumHandler = event -> {
+        System.out.println("Looking up album...");
+        var result = linkedAlbumInfoService.getAlbumInfo();
+        System.out.println("Looked up album with result..." + result);
+        //folderPath = ioHelper.getFolderPath();
+        //genericAlbumService.saveAlbumTracksToFile(tracks, folderPath);
+            };
 
     EventHandler<ActionEvent> changeNameOrderHandler = event -> {
-        _nameOrderView.selectNameOrder(tracks);
-        // Todo: To check only the first track is insufficient, change to loop.
+        nameOrderView.selectNameOrder(tracks);
+        // To check only the first track is insufficient, change to loop.
         if (tracks.get(0).isUnsaved()) {
             toggleButtonStatus(true);
             alert = new Alert(AlertType.NONE);
             alert.setAlertType(AlertType.INFORMATION);
-            alert.setHeaderText(null);
+            this.alert.setHeaderText(null);
             alert.setTitle(null);
             alert.setContentText("View your changes before saving.");
             alert.show();

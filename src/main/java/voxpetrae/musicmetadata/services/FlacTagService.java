@@ -1,5 +1,6 @@
 package voxpetrae.musicmetadata.services;
 
+import voxpetrae.musicmetadata.MainView;
 import voxpetrae.musicmetadata.services.interfaces.TagService;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.flac.FlacTag;
@@ -20,7 +21,6 @@ public class FlacTagService<T> implements TagService<FlacTag> {
         try {
             FlacTagReader reader = new FlacTagReader();
             FlacTag tag = reader.read(new RandomAccessFile(file, "rw"));
-            System.out.println("FIELD COUNT: " + tag.getFieldCount());
             return tag;
         } catch (CannotReadException ex) {
             System.out.println("CannotReadException in FlacTagService.getTag: " + ex);

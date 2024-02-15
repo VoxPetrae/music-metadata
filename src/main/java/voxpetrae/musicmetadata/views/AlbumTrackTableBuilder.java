@@ -16,6 +16,7 @@ import com.google.inject.Injector;
 import voxpetrae.musicmetadata.guice.MusicMetadataModule;
 
 import voxpetrae.musicmetadata.models.AlbumTrack;
+import voxpetrae.musicmetadata.services.FlacTagService;
 import voxpetrae.musicmetadata.views.interfaces.TagView;
 import voxpetrae.musicmetadata.views.interfaces.TableBuilder;
 import voxpetrae.musicmetadata.textfieldworkaround.StringTableCell;
@@ -25,7 +26,6 @@ public class AlbumTrackTableBuilder<T> implements TableBuilder<AlbumTrack> {
     @SuppressWarnings("unchecked")
     public TableView<AlbumTrack> buildTable(ObservableList<AlbumTrack> tracks){
         // Create a TableView and make its AlbumTrack items observable and editable
-        
         TableView<AlbumTrack> table = new TableView<AlbumTrack>();
         table.setEditable(true);
         table.setId("tracks");

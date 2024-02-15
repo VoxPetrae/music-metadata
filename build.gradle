@@ -23,15 +23,18 @@ repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    mavenCentral()
     // For JAudiotagger
     maven { url 'https://dl.bintray.com/ijabz/maven' }
-}
+ }
 
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
     implementation 'com.google.guava:guava:26.0-jre'
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
+    implementation 'org.apache.jena:jena-arq:4.7.0'
+    //implementation group: 'org.apache.jena', name: 'apache-jena', version: '5.0.0-rc1'
     implementation group: 'com.google.inject', name: 'guice', version: '4.2.2'
     implementation 'net.jthink:jaudiotagger:2.2.5'
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.3'
