@@ -23,7 +23,7 @@ public class GenericTagService<T> implements TagService<Tag> {
             AudioFile f = AudioFileIO.read(file);
             Tag tag = f.getTag();
             var audioHeader = f.getAudioHeader();
-            System.out.println("Generic FORMAT: " + audioHeader.getFormat() + ", " + tag.getFieldCount());
+            //System.out.println("Generic FORMAT: " + audioHeader.getFormat() + ", " + tag.getFieldCount());
             return tag;
         } catch (TagException ex) {
             System.out.println("TagException in GenericTagService.getTag: " + ex);    

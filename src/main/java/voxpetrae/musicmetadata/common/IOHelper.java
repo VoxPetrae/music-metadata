@@ -19,6 +19,7 @@ public class IOHelper extends Stage implements voxpetrae.musicmetadata.common.in
         else{
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle(title);
+            directoryChooser.setInitialDirectory(new File(Props.prop("defaultpath")));
             File directory = directoryChooser.showDialog(this);
             if (directory != null){
                 folderPath = directory.getAbsolutePath();
@@ -31,7 +32,7 @@ public class IOHelper extends Stage implements voxpetrae.musicmetadata.common.in
     public File getFileFromFilePath(Path filePath){
         return filePath.toFile();
     }
-    // Todo: The fileSuffix thing could be smoother, ponder alternative solution.
+    // The fileSuffix thing could be smoother, ponder alternative solution.
     public Boolean isAudioFile(Path filePath, String fileSuffix){
         return Files.isRegularFile(filePath) && filePath.toString().toLowerCase().endsWith(fileSuffix);
    }

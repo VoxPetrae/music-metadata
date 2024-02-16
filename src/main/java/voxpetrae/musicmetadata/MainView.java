@@ -47,7 +47,7 @@ public class MainView extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        logger.info("#TEST");
+        logger.info("Startup");
         Runtime.getRuntime().addShutdownHook(new Thread(() -> System.out.println("Shutdown hook test")));
         launch(args);
     }

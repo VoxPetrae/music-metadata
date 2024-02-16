@@ -38,7 +38,7 @@ public class AlbumTableView extends Stage implements AlbumView {
     private Button saveNameOrderChangesButton;
     private Alert alert;
     private String folderPath;
-
+    private String albumName; // Maybe in a model with tracks instead
     private IOHelper ioHelper;
     private AlbumService genericAlbumService;
     private TableBuilder<AlbumTrack> tableBuilder;
@@ -59,6 +59,7 @@ public class AlbumTableView extends Stage implements AlbumView {
         folderPath = ioHelper.getFolderPath();
         if (this.folderPath != null){
             tracks = genericAlbumService.getAlbumTracks(folderPath);    
+            albumName = genericAlbumService.getAlbumName();
         }
         else{
             return;
@@ -83,7 +84,6 @@ public class AlbumTableView extends Stage implements AlbumView {
         hBox.getChildren().addAll(saveNameOrderChangesButton, messageLabel);
         hBox.setAlignment(Pos.BOTTOM_CENTER);
         vBox.getChildren().addAll(menuBar, imageLabel, table, hBox);
-
         this.setTitle("Music Album");
         this.setScene(scene);
         this.show();
@@ -169,7 +169,7 @@ public class AlbumTableView extends Stage implements AlbumView {
     };
     EventHandler<ActionEvent> lookUpAlbumHandler = event -> {
         System.out.println("Looking up album...");
-        var result = linkedAlbumInfoService.getAlbumInfo();
+        var result = linkedAlbumInfoService.getAlbumInfo(albumName);
         System.out.println("Looked up album with result..." + result);
         //folderPath = ioHelper.getFolderPath();
         //genericAlbumService.saveAlbumTracksToFile(tracks, folderPath);

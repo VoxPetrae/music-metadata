@@ -4,40 +4,26 @@ import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
-
+import org.apache.logging.log4j.Logger;
 import voxpetrae.musicmetadata.services.interfaces.AlbumInfoService;
 public class LinkedAlbumInfoService implements AlbumInfoService {
 
-    public boolean getAlbumInfo(){
-        String serviceURI = "http://dbpedia.org/sparql";
-        String queryString = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" +
-                             "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" +
-                             "SELECT * " +
-                             "WHERE { " +
-                             "album rdfs:label \"Thriller\" @en ." +
-                             "}" + 
-                             "LIMIT 10";
-        /*
- PREFIX dbo: <http://dbpedia.org/ontology/>
-PREFIX dbr: <http://dbpedia.org/resource/>
-
-SELECT ?album ?artist ?releaseDate
-WHERE {
-  ?album a dbo:Album ;
-         dbo:musicalArtist ?artist ;
-         dbo:releaseDate ?releaseDate ;
-         rdfs:label "Thriller"@en .  
-}
-         */
+    private static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(LinkedAlbumInfoService.class);
+    public boolean getAlbumInfo(String albumTitle){
+        var dbPediaURI = "http://dbpedia.org/sparql";
+        var queryString = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> " +
+        "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> " + 
+        "SELECT ?album " +
+        "WHERE { ?album rdfs:label \"" + albumTitle + "\"@en } ";
         Query query = QueryFactory.create(queryString);
-        QueryExecution qexec = QueryExecution.service(serviceURI).query(query).build();
-
+        QueryExecution qexec = QueryExecution.service(dbPediaURI).query(queryString).build();
+        logger.info("Fetching album: {}...", qexec.getQueryString());
         try {
             ResultSet results = qexec.execSelect();
             ResultSetFormatter.out(System.out, results, query); 
         } finally {
             qexec.close();
         }
-        return true;
+        return true; // Should be a model with album information
     }
 }
