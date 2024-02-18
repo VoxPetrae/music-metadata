@@ -40,7 +40,7 @@ public class MusicMetadataModule extends AbstractModule {
         bind(NameOrderService.class).to(voxpetrae.musicmetadata.services.nameorder.NameOrderService.class);
         bind(NameOrderModifier.class).to(voxpetrae.musicmetadata.services.nameorder.NameOrderModifier.class);
         bind(NameOrderOperations.class).to(voxpetrae.musicmetadata.services.nameorder.NameOrderOperations.class);
-        bind(NameOrderView.class).to(voxpetrae.musicmetadata.views.NameOrderView.class);
+        bind(NameOrderView.class).to(voxpetrae.musicmetadata.views.ChangeNameOrderView.class);
         bind(new TypeLiteral<TableBuilder<AlbumTrack>>(){}).to(new TypeLiteral<AlbumTrackTableBuilder<AlbumTrack>>(){});
         bind(new TypeLiteral<TableBuilder<VorbisCommentTagField>>(){}).to(new TypeLiteral<FlacTagTableBuilder<VorbisCommentTagField>>(){});
     }

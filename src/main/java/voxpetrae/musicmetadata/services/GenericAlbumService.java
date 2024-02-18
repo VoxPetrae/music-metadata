@@ -22,20 +22,25 @@ import voxpetrae.musicmetadata.services.interfaces.TagService;
 import voxpetrae.musicmetadata.common.interfaces.IOHelper;
 
 public class GenericAlbumService implements AlbumService {
-    @Inject private IOHelper _ioHelper;
-    @Inject private TagService<Tag> _genericTagService;
+    private IOHelper ioHelper;
+    private TagService<Tag> genericTagService;
     private String albumName;
     private String albumArtist;
+    @Inject 
+    public GenericAlbumService(IOHelper ioHelper, TagService<Tag> genericTagService){
+        this.ioHelper = ioHelper;
+        this.genericTagService = genericTagService;
+    }
     public ObservableList<AlbumTrack> getAlbumTracks(String folderPath) {
         
         List<AlbumTrack> aTracks = new ArrayList<AlbumTrack>();
         //System.out.println("Trying folder " + folderPath + "...");
         try (Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
             paths.forEach((Path filePath) -> {
-                var isAudioFile = _ioHelper.isAudioFile(filePath, "flac"); // Check for different image formats
+                var isAudioFile = ioHelper.isAudioFile(filePath, "flac"); // Check for different image formats
                 if (Boolean.TRUE.equals(isAudioFile)) {
                     try {
-                        var tag = _genericTagService.getTag(_ioHelper.getFileFromFilePath(filePath));
+                        var tag = genericTagService.getTag(ioHelper.getFileFromFilePath(filePath));
                         List<TagField> genTagFields = copyIterator(tag.getFields());
                         
                         // for (TagField genField : genTagFields) {
@@ -56,10 +61,8 @@ public class GenericAlbumService implements AlbumService {
                                     + albumArtist);
                             aTracks.add(new AlbumTrack(track, title, artists, albumArtists, composers, genre, year,
                                     filePath.toString(), false));
-                            if (albumName == null)
-                                albumName = tag.getFirst(FieldKey.ALBUM);
-                            if (albumArtist == null)
-                                albumArtist = tag.getFirst(FieldKey.ALBUM_ARTIST);
+                            albumName = tag.getFirst(FieldKey.ALBUM);
+                            albumArtist = tag.getFirst(FieldKey.ALBUM_ARTIST);
                         } else {
                             System.out.println("Not a real ID tag: " + tag.toString());
                         }
@@ -89,10 +92,10 @@ public class GenericAlbumService implements AlbumService {
     public boolean saveAlbumTracksToFile(ObservableList<AlbumTrack> albumTracks, String folderPath){
         try(Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
             paths.forEach((Path filePath) -> {
-                var isAudioFile = _ioHelper.isAudioFile(filePath, "flac");
+                var isAudioFile = ioHelper.isAudioFile(filePath, "flac");
                 if (Boolean.TRUE.equals(isAudioFile)) {
                     var file = filePath.toFile();
-                    FlacTag tag = (FlacTag) _genericTagService.getTag(file);
+                    FlacTag tag = (FlacTag) genericTagService.getTag(file);
                     if (tag != null && !tag.isEmpty()){
                         int trackNumber = Integer.parseInt(tag.getFirst(FieldKey.TRACK));
                         AlbumTrack track = getAlbumTrack(albumTracks, trackNumber);
@@ -105,7 +108,7 @@ public class GenericAlbumService implements AlbumService {
                         composers.equals(track.getComposer()) + "!");
                         // 1: Hur mappa alla värden i track mot taggarna i flactag?
                         // 2: Om man låter AlbumTrack ha dynamiska properties som får sina värden vid inläsning av flac-filen.
-                        _genericTagService.updateTag(tag, file);
+                        genericTagService.updateTag(tag, file);
                         track.setUnsaved(false);
                         //albumTracks.add(new AlbumTrack(track, title, artists, albumArtists, composers, filePath.toString(), false));
                     }

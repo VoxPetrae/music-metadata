@@ -26,14 +26,20 @@ import javax.inject.Inject;
 
 @SuppressWarnings("unchecked")
 public class FlacTagView extends Stage implements TagView{
-    @Inject private IOHelper _ioHelper;
-    @Inject private TagService<FlacTag> _flacTagService;
-    @Inject private TableBuilder<VorbisCommentTagField> _tableBuilder;
+    private IOHelper ioHelper;
+    private TagService<FlacTag> flacTagService;
+    private TableBuilder<VorbisCommentTagField> tableBuilder;
     
+    @Inject
+    public FlacTagView(IOHelper ioHelper, TagService<FlacTag> flacTagService, TableBuilder<VorbisCommentTagField> tableBuilder){
+        this.ioHelper = ioHelper;
+        this.flacTagService = flacTagService;
+        this.tableBuilder = tableBuilder;
+    }
     public void initiate(Path filePath){
-        if (_ioHelper.isAudioFile(filePath, "flac")){
+        if (Boolean.TRUE.equals(ioHelper.isAudioFile(filePath, "flac"))){
             File file = filePath.toFile();
-            FlacTag tag = (FlacTag) _flacTagService.getTag(file);
+            FlacTag tag = (FlacTag) flacTagService.getTag(file);
             if (tag == null){
                 System.out.println("No tag for file!");
             }
@@ -59,7 +65,7 @@ public class FlacTagView extends Stage implements TagView{
         var cssPath = getClass().getResource("../css/musicmetadata.css").toExternalForm();
         scene.getStylesheets().add(cssPath);
         MenuBar menuBar = buildMenu();
-        TableView table = _tableBuilder.buildTable(fields);
+        TableView<VorbisCommentTagField> table = tableBuilder.buildTable(fields);
         //TableView table = buildTable(fields);
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(0, 10, 10, 0));
@@ -85,17 +91,14 @@ public class FlacTagView extends Stage implements TagView{
         return menuBar;
     }
     
-    EventHandler<ActionEvent> exitHandler = new EventHandler<ActionEvent>(){
-        @Override
-        public void handle(ActionEvent event) {
-            System.out.println("Closing Tag View...");
-            Stage stage = getStageFromEvent(event);
-            try{
-                stage.close();
-            }
-            catch(Exception e){
-                System.out.println("Oops! Closing Tag View failed because of " + e);
-            }
+    EventHandler<ActionEvent> exitHandler = event -> {
+        System.out.println("Closing Tag View...");
+        Stage stage = getStageFromEvent(event);
+        try{
+            stage.close();
+        }
+        catch(Exception e){
+            System.out.println("Oops! Closing Tag View failed because of " + e);
         }
     };
 
@@ -106,9 +109,8 @@ public class FlacTagView extends Stage implements TagView{
         MenuItem item = (MenuItem) event.getTarget();
         Menu menu = item.getParentMenu();
         MenuBar bar = (MenuBar) menu.getProperties().get(MenuBar.class.getCanonicalName());
-        Node node = (Node) bar;
-        Stage stage = (Stage) node.getScene().getWindow();
-        return stage;
+        Node node = bar;
+        return (Stage) node.getScene().getWindow();
     }
 
     /**
