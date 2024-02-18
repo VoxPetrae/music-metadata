@@ -33,7 +33,7 @@ public class GenericAlbumService implements AlbumService {
     }
     public ObservableList<AlbumTrack> getAlbumTracks(String folderPath) {
         
-        List<AlbumTrack> aTracks = new ArrayList<AlbumTrack>();
+        List<AlbumTrack> aTracks = new ArrayList<>();
         //System.out.println("Trying folder " + folderPath + "...");
         try (Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
             paths.forEach((Path filePath) -> {

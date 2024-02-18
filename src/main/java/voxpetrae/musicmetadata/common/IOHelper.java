@@ -11,15 +11,21 @@ public class IOHelper extends Stage implements voxpetrae.musicmetadata.common.in
     private String folderPath;
     
     public void setFolderPath(String title){
-        var useMockPathString = (String) Props.prop("usemockpath");
-        boolean useMockPath = Boolean.valueOf(useMockPathString);
-        if (useMockPath){
-            folderPath = Props.prop("mockpath");
+        var useTestPathString = (String) Props.prop("usetestpath");
+        var useDefaultPathString = (String) Props.prop("usedefaultpath");
+        boolean useTestPath = Boolean.valueOf(useTestPathString);
+        boolean useDefaultPath = Boolean.valueOf(useDefaultPathString);
+        var defaultPath = (String) Props.prop("defaultpath");
+        if (useTestPath){
+            folderPath = Props.prop("testpath");
         }
         else{
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle(title);
-            directoryChooser.setInitialDirectory(new File(Props.prop("defaultpath")));
+            if (useDefaultPath){
+                directoryChooser.setInitialDirectory(new File(defaultPath));
+            }
+            
             File directory = directoryChooser.showDialog(this);
             if (directory != null){
                 folderPath = directory.getAbsolutePath();
