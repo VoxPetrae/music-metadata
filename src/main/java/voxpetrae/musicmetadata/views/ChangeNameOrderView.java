@@ -14,15 +14,24 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.layout.GridPane;
 import javafx.geometry.Insets;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+
 import javax.inject.Inject;
 import voxpetrae.musicmetadata.services.interfaces.NameOrderService;
 import voxpetrae.musicmetadata.models.AlbumTrack;
 import voxpetrae.musicmetadata.services.nameorder.NameOrder;
 import voxpetrae.musicmetadata.services.nameorder.NameTagsToChange;
 
-public class NameOrderView implements voxpetrae.musicmetadata.views.interfaces.NameOrderView {
-    @Inject private NameOrderService _nameOrderService;
+public class ChangeNameOrderView implements voxpetrae.musicmetadata.views.interfaces.NameOrderView {
+    private static final String STRAIGHT_NAMEORDER = "STRAIGHT_NAMEORDER";
+    private static final String COMPOSER = "COMPOSER";
+    private static final String ALBUMARTIST = "ALBUMARTIST";
+    private static final String ARTIST = "ARTIST";
+    private NameOrderService nameOrderService;
+
+    @Inject
+    public ChangeNameOrderView(NameOrderService nameOrderService){
+        this.nameOrderService = nameOrderService;
+    }
 
     @SuppressWarnings("unchecked")
     public void selectNameOrder(ObservableList<AlbumTrack> tracks){
@@ -30,28 +39,28 @@ public class NameOrderView implements voxpetrae.musicmetadata.views.interfaces.N
                         HashMap<String, Boolean> prefs = new HashMap<>();
             // Open dialog window with name alternatives
             Dialog dialog = createNameTagChooser(
-                    param -> prefs.put("ARTIST", param),
-                    param -> prefs.put("ALBUMARTIST", param),
-                    param -> prefs.put("COMPOSER", param),
-                    param -> prefs.put("STRAIGHT_NAMEORDER", param));
+                    param -> prefs.put(ARTIST, param),
+                    param -> prefs.put(ALBUMARTIST, param),
+                    param -> prefs.put(COMPOSER, param),
+                    param -> prefs.put(STRAIGHT_NAMEORDER, param));
             // Get response
             //Optional<ButtonType> result = (Optional<ButtonType>) dialog.showAndWait();
             dialog.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK){
                     final String nameOrder;
-                    if (prefs.get("ARTIST") != null)
+                    if (prefs.get(ARTIST) != null)
                         nameFieldsToChange.add(NameTagsToChange.ARTIST.name());
-                    if (prefs.get("ALBUMARTIST") != null)
+                    if (prefs.get(ALBUMARTIST) != null)
                         nameFieldsToChange.add(NameTagsToChange.ALBUMARTIST.name());
-                    if (prefs.get("COMPOSER") != null)
+                    if (prefs.get(COMPOSER) != null)
                         nameFieldsToChange.add(NameTagsToChange.COMPOSER.name());
                     // Notice: STRAIGHT_NAMEORDER = null means it's not registered by the listener,
                     // but since it's pre-selected it still counts as true. Tricky yes?
-                    if(prefs.get("STRAIGHT_NAMEORDER") == null){
+                    if(prefs.get(STRAIGHT_NAMEORDER) == null){
                         System.out.println("STRAIGHT IS SELECTED");
                         nameOrder = NameOrder.GIVENNAMESPACESURNAME.name();
                     }
-                    else if(prefs.get("STRAIGHT_NAMEORDER")){
+                    else if(Boolean.TRUE.equals(prefs.get(STRAIGHT_NAMEORDER))){
                         System.out.println("STRAIGHT IS SELECTED");
                         nameOrder = NameOrder.GIVENNAMESPACESURNAME.name();
                     }
@@ -59,10 +68,10 @@ public class NameOrderView implements voxpetrae.musicmetadata.views.interfaces.N
                         System.out.println("REVERSE IS SELECTED");
                         nameOrder = NameOrder.SURNAMECOMMASPACEGIVENNAME.name();
                     }
-                    System.out.println("Artists: " + prefs.get("ARTIST") + ", albumArtists: " + prefs.get("ALBUMARTIST") +
-                            ", composers: " + prefs.get("COMPOSER") + ", chosen name order: " + nameOrder);
+                    System.out.println("Artists: " + prefs.get(ARTIST) + ", albumArtists: " + prefs.get(ALBUMARTIST) +
+                            ", composers: " + prefs.get(COMPOSER) + ", chosen name order: " + nameOrder);
                     if (!nameFieldsToChange.isEmpty()){
-                        _nameOrderService.changeNameOrder(tracks, nameFieldsToChange, nameOrder);
+                        nameOrderService.changeNameOrder(tracks, nameFieldsToChange, nameOrder);
                         // if (tracks.get(0).isUnsaved()){
                         //     toggleButtonStatus(true);
                         //     alert.setAlertType(AlertType.INFORMATION); 
@@ -85,7 +94,7 @@ public class NameOrderView implements voxpetrae.musicmetadata.views.interfaces.N
     public Dialog<String> createNameTagChooser(Consumer<Boolean> artistsAction, Consumer<Boolean> albumArtistsAction,
             Consumer<Boolean> composersAction, Consumer<Boolean> straightNameOrderAction) {
         // Create dialog
-        Dialog<String> dialog = new Dialog<String>();
+        Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Name order choices");
         dialog.setHeaderText("Select name tag(s) to change and which name order to change to");
         dialog.setContentText("Name order choices");
@@ -129,18 +138,14 @@ public class NameOrderView implements voxpetrae.musicmetadata.views.interfaces.N
         // and has to be treated as null at evaluation time. So null and true mean
         // "Straight",
         // while false means "Reverse".
-        radioGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-            @Override
-            public void changed(ObservableValue<? extends Toggle> observableValue, Toggle old_toggle,
-                    Toggle new_toggle) {
-                if (radioGroup.getSelectedToggle() != null
-                        && radioGroup.getSelectedToggle().getUserData() == "REVERSE") {
-                    straightNameOrderAction.accept(false);
-                } else {
-                    straightNameOrderAction.accept(true);
-                }
+        radioGroup.selectedToggleProperty().addListener((ChangeListener<Toggle>) (observableValue, old_toggle, new_toggle) -> {
+            if (radioGroup.getSelectedToggle() != null
+            && radioGroup.getSelectedToggle().getUserData() == "REVERSE") {
+        straightNameOrderAction.accept(false);
+            } else {
+        straightNameOrderAction.accept(true);
             }
-        });
+         });
 
         // Add components to grid pane
         gridPane.add(artists, 0, 0);

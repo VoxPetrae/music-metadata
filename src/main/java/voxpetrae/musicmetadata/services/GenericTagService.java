@@ -3,17 +3,13 @@ package voxpetrae.musicmetadata.services;
 import voxpetrae.musicmetadata.services.interfaces.TagService;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.audio.generic.GenericAudioHeader;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
-import org.jaudiotagger.audio.exceptions.CannotWriteException;
 import java.io.File;
 import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.io.RandomAccessFile;
 
 // Observe: This class has nothing to do with org.jaudiotagger.audio.generic.GenericTag.
 // Maybe I should rename it to CommonTagService or the like...

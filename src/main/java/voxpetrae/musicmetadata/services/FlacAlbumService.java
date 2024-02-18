@@ -22,23 +22,28 @@ import voxpetrae.musicmetadata.common.interfaces.IOHelper;
 
 //@SuppressWarnings("unchecked")
 public class FlacAlbumService implements AlbumService {
-    @Inject private IOHelper _ioHelper;
-    @Inject private TagService<FlacTag> _flacTagService;
+    private IOHelper ioHelper;
+    private TagService<FlacTag> flacTagService;
     private String albumName;
     private String albumArtist;
 
+    @Inject
+    public FlacAlbumService(IOHelper ioHelper, TagService<FlacTag> flacTagService ){
+        this.ioHelper = ioHelper;
+        this.flacTagService = flacTagService;
+    }
     /**
      * {@inheritDoc}
      */
     public ObservableList<AlbumTrack> getAlbumTracks(String folderPath) {
         
-        List<AlbumTrack> aTracks = new ArrayList<AlbumTrack>();
+        List<AlbumTrack> aTracks = new ArrayList<>();
         //System.out.println("Trying folder " + folderPath + "...");
         try (Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
             paths.forEach((Path filePath) -> {
-                if (_ioHelper.isAudioFile(filePath, "flac")) {
+                if (Boolean.TRUE.equals(ioHelper.isAudioFile(filePath, "flac"))) {
                     try {
-                        var flacTag = (FlacTag) _flacTagService.getTag(_ioHelper.getFileFromFilePath(filePath));
+                        var flacTag = (FlacTag) flacTagService.getTag(ioHelper.getFileFromFilePath(filePath));
                         // AudioFile audioFile = null;
 
                         // audioFile = AudioFileIO.read(new File(filePath.toString()));
@@ -90,18 +95,15 @@ public class FlacAlbumService implements AlbumService {
         } catch (IOException ex) {
             System.out.println("Exception in " + FlacAlbumService.class.getName() + ": " + ex);
         }
-        ObservableList<AlbumTrack> albumTracks = FXCollections.observableArrayList(aTracks);
-        //ObservableList<AlbumTrack> albumTracks = FXCollections.observableArrayList(AlbumTrack.extractor());
-        //albumTracks.addAll(aTracks);
-        return albumTracks;
+        return FXCollections.observableArrayList(aTracks);
     }
 
     public boolean saveAlbumTracksToFile(ObservableList<AlbumTrack> albumTracks, String folderPath){
         try(Stream<Path> paths = Files.walk(Paths.get(folderPath))) {
             paths.forEach((Path filePath) -> {
-                if (_ioHelper.isAudioFile(filePath, "flac")) {
+                if (Boolean.TRUE.equals(ioHelper.isAudioFile(filePath, "flac"))) {
                     var file = filePath.toFile();
-                    FlacTag tag = (FlacTag) _flacTagService.getTag(file);
+                    FlacTag tag = (FlacTag) flacTagService.getTag(file);
                     if (tag != null && !tag.isEmpty()){
                         int trackNumber = Integer.parseInt(tag.getFirst(FieldKey.TRACK));
                         AlbumTrack track = getAlbumTrack(albumTracks, trackNumber);
@@ -114,7 +116,7 @@ public class FlacAlbumService implements AlbumService {
                         composers.equals(track.getComposer()) + "!");
                         // 1: Hur mappa alla värden i track mot taggarna i flactag?
                         // 2: Om man låter AlbumTrack ha dynamiska properties som får sina värden vid inläsning av flac-filen.
-                        _flacTagService.updateTag(tag, file);
+                        flacTagService.updateTag(tag, file);
                         track.setUnsaved(false);
                         //albumTracks.add(new AlbumTrack(track, title, artists, albumArtists, composers, filePath.toString(), false));
                     }
@@ -175,7 +177,7 @@ public class FlacAlbumService implements AlbumService {
      * @return A List with the elements from the Iterator
      */
     private static <T> List<T> copyIterator(Iterator<T> iter) {
-        List<T> copy = new ArrayList<T>();
+        List<T> copy = new ArrayList<>();
         while (iter.hasNext())
             copy.add(iter.next());
         return copy;

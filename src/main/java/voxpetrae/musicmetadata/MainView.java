@@ -13,14 +13,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import com.google.inject.Guice;
-//import com.google.inject.Injector;
 import voxpetrae.musicmetadata.views.interfaces.AlbumView;
 import voxpetrae.musicmetadata.guice.MusicMetadataModule;
 import org.apache.logging.log4j.Logger;
 
 public class MainView extends Application {
     private static final Logger logger = org.apache.logging.log4j.LogManager.getLogger(MainView.class);
-    private AlbumView _albumView;
+    private AlbumView albumView;
 
     @Override
     public void start(Stage primaryStage) {
@@ -28,7 +27,7 @@ public class MainView extends Application {
         //Application.setUserAgentStylesheet(STYLESHEET_MODENA);
         MusicMetadataModule module = new MusicMetadataModule();
         var injector = Guice.createInjector(module);
-        this._albumView = injector.getInstance(AlbumView.class);
+        this.albumView = injector.getInstance(AlbumView.class);
         
         final String MENU_BAR_ID = "#menuBar";
         final VBox vBox = new VBox();
@@ -60,8 +59,9 @@ public class MainView extends Application {
     private MenuBar buildMenu() {
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
-        Menu toolsMenu = new Menu("Tools");
-        menuBar.getMenus().addAll(fileMenu, toolsMenu);
+        //Menu toolsMenu = new Menu("Tools");
+        //menuBar.getMenus().addAll(fileMenu, toolsMenu);
+        menuBar.getMenus().addAll(fileMenu);
         MenuItem openAlbum = new MenuItem("Open album");
         MenuItem quit = new MenuItem("Quit");
         openAlbum.setOnAction(openAlbumView);
@@ -81,15 +81,12 @@ public class MainView extends Application {
     /**
      * Initiates the album listing GUI
      */
-    EventHandler<ActionEvent> openAlbumView = new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent event) {
-            System.out.println("Open Album...");
-            
-                _albumView.initiate();
-            
-        }
-    };
+    EventHandler<ActionEvent> openAlbumView = event -> {
+	    System.out.println("Open Album...");
+	    
+	        albumView.initiate();
+	    
+	};
     @Override
     public void stop(){
         System.out.println("Window closing...");
